@@ -1,3 +1,3 @@
 export default function Index() {
-    return <>首页</>;
+  return <>首页</>;
 }
