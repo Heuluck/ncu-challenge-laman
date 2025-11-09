@@ -20,7 +20,7 @@ export default () => {
           <LeftOutlined />
         </button>
         <div className="m-8">
-          <LoginForm title="拉曼光谱数据">
+          <LoginForm title="拉曼光谱数据库">
             <div className="mt-8" />
             <ProFormText
               name="username"

@@ -1,4 +1,4 @@
-import { SmileFilled } from "@ant-design/icons";
+import { AreaChartOutlined, HomeFilled } from "@ant-design/icons";
 import { PageContainer, ProCard, ProLayout } from "@ant-design/pro-components";
 import { Button } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
@@ -9,6 +9,8 @@ function BaseLayout() {
   return (
     <>
       <ProLayout
+        title="拉曼光谱数据库"
+        logo={<AreaChartOutlined />}
         onPageChange={(loc) => {
           if (loc?.pathname) {
             console.log(loc.pathname);
@@ -26,8 +28,8 @@ function BaseLayout() {
           routes: [
             {
               path: "/",
-              name: "首页",
-              icon: <SmileFilled />,
+              name: "病人列表",
+              icon: <HomeFilled />,
             },
           ],
         }}
