@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router';
-import './App.css';
 import Login from './pages/login';
 import BaseLayout from './layout/base';
 import Index from './pages';
+import './App.css';
 
 function App() {
     return (
@@ -10,8 +10,8 @@ function App() {
             <Routes>
                 <Route element={<BaseLayout />}>
                     <Route index element={<Index />} />
-                    <Route path="/login" element={<Login />} />
                 </Route>
+                    <Route path="/login" element={<Login />} />
             </Routes>
         </>
     );
