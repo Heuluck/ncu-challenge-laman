@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router';
+import { useCallback } from "react";
+import { useNavigate, useLocation } from "react-router";
 
-export default function useBack(fallback = '/') {
+export default function useBack(fallback = "/") {
   const navigate = useNavigate();
   const location = useLocation();
 
