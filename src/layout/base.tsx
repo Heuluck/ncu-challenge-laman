@@ -1,5 +1,6 @@
-import { LockFilled, SmileFilled } from '@ant-design/icons';
+import { SmileFilled } from '@ant-design/icons';
 import { PageContainer, ProCard, ProLayout } from '@ant-design/pro-components';
+import { Button } from 'antd';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router';
 
 function BaseLayout() {
@@ -17,15 +18,7 @@ function BaseLayout() {
         location={{
           pathname: location.pathname,
         }}
-        menuItemRender={(item, dom) =>
-          item.path ? (
-            <Link to={item.path}>
-              {dom}
-            </Link>
-          ) : (
-            dom
-          )
-        }
+        menuItemRender={(item, dom) => (item.path ? <Link to={item.path}>{dom}</Link> : dom)}
         route={{
           path: '/',
           routes: [
@@ -34,13 +27,15 @@ function BaseLayout() {
               name: '首页',
               icon: <SmileFilled />,
             },
-            {
-              path: '/login',
-              name: '登录',
-              icon: <LockFilled />,
-            },
           ],
-        }}>
+        }}
+        menuFooterRender={() => (
+          <div className="text-center">
+            <Button autoInsertSpace={false} size='small'>
+              <Link to="/login">登录</Link>
+            </Button>
+          </div>
+        )}>
         <PageContainer>
           <ProCard>
             <Outlet />
