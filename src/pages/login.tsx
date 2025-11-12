@@ -2,7 +2,7 @@ import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { LoginForm, ProFormText } from "@ant-design/pro-components";
 import useBack from "../hook/useBack";
 
-export default () => {
+function LoginPage() {
   const back = useBack("/");
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
@@ -56,3 +56,5 @@ export default () => {
     </div>
   );
 };
+
+export default LoginPage;

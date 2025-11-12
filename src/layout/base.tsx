@@ -1,53 +1,93 @@
-import { AreaChartOutlined, HomeFilled } from "@ant-design/icons";
-import { PageContainer, ProCard, ProLayout } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { AreaChartOutlined, HomeFilled, UserOutlined } from "@ant-design/icons";
+import {
+  PageContainer,
+  ProCard,
+  ProConfigProvider,
+  ProLayout,
+  SettingDrawer,
+  type ProSettings,
+} from "@ant-design/pro-components";
+import { Button, ConfigProvider } from "antd";
+import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
+const routeList = {
+  path: "/",
+  routes: [
+    {
+      path: "/",
+      name: "病人列表",
+      icon: <HomeFilled />,
+    },
+    {
+      path: "/user",
+      name: "用户管理",
+      icon: <UserOutlined />,
+    }
+  ],
+};
+
 function BaseLayout() {
+  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>();
   const navigate = useNavigate();
   const location = useLocation();
   return (
-    <>
-      <ProLayout
-        title="拉曼光谱数据库"
-        logo={<AreaChartOutlined />}
-        onPageChange={(loc) => {
-          if (loc?.pathname) {
-            console.log(loc.pathname);
-            navigate(loc.pathname);
-          }
-        }}
-        location={{
-          pathname: location.pathname,
-        }}
-        menuItemRender={(item, dom) =>
-          item.path ? <Link to={item.path}>{dom}</Link> : dom
-        }
-        route={{
-          path: "/",
-          routes: [
-            {
-              path: "/",
-              name: "病人列表",
-              icon: <HomeFilled />,
-            },
-          ],
-        }}
-        menuFooterRender={() => (
-          <div className="text-center">
-            <Button autoInsertSpace={false} size="small">
-              <Link to="/login">登录</Link>
-            </Button>
-          </div>
-        )}
-      >
-        <PageContainer>
-          <ProCard>
-            <Outlet />
-          </ProCard>
-        </PageContainer>
-      </ProLayout>
-    </>
+    <div id="pro-layout-container">
+      <ProConfigProvider hashed={false}>
+        <ConfigProvider
+          getTargetContainer={() => {
+            return (
+              document.getElementById("pro-layout-container") || document.body
+            );
+          }}
+        >
+          <ProLayout
+            {...settings}
+            title="拉曼光谱数据库"
+            logo={<AreaChartOutlined />}
+            onPageChange={(loc) => {
+              if (loc?.pathname) {
+                console.log(loc.pathname);
+                navigate(loc.pathname);
+              }
+            }}
+            location={{
+              pathname: location.pathname,
+            }}
+            menuItemRender={(item, dom) =>
+              item.path ? <Link to={item.path}>{dom}</Link> : dom
+            }
+            route={routeList}
+            menuFooterRender={() => (
+              <div className="text-center">
+                <Button autoInsertSpace={false} size="small">
+                  <Link to="/login">登录</Link>
+                </Button>
+              </div>
+            )}
+          >
+            <PageContainer>
+              <ProCard>
+                <Outlet />
+              </ProCard>
+            </PageContainer>
+          </ProLayout>
+          <SettingDrawer
+            pathname={location.pathname}
+            enableDarkTheme
+            getContainer={(e: any) => {
+              if (typeof window === "undefined") return e;
+              return document.getElementById("pro-layout-container");
+            }}
+            settings={settings}
+            onSettingChange={(changeSetting) => {
+              setSetting(changeSetting);
+            }}
+            disableUrlParams={false}
+          />
+        </ConfigProvider>
+      </ProConfigProvider>
+    </div>
   );
 }
 

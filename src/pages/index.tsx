@@ -108,7 +108,7 @@ const columns: ProColumns<TableListItem>[] = [
   { title: "备注", dataIndex: "memo", key: "memo", width: 200 },
 ];
 
-export default () => {
+function IndexPage() {
   return (
     <ProTable<TableListItem>
       columns={columns}
@@ -139,3 +139,5 @@ export default () => {
     />
   );
 };
+
+export default IndexPage;
