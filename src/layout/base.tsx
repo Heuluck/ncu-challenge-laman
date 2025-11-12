@@ -1,4 +1,9 @@
-import { AreaChartOutlined, HomeFilled, UserOutlined } from "@ant-design/icons";
+import {
+  AreaChartOutlined,
+  DotChartOutlined,
+  HomeFilled,
+  UserOutlined,
+} from "@ant-design/icons";
 import {
   PageContainer,
   ProCard,
@@ -7,7 +12,7 @@ import {
   SettingDrawer,
   type ProSettings,
 } from "@ant-design/pro-components";
-import { Button, ConfigProvider } from "antd";
+import { ConfigProvider } from "antd";
 import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
@@ -20,10 +25,15 @@ const routeList = {
       icon: <HomeFilled />,
     },
     {
+      path: "/raman",
+      name: "拉曼光谱",
+      icon: <DotChartOutlined />,
+    },
+    {
       path: "/user",
       name: "用户管理",
       icon: <UserOutlined />,
-    }
+    },
   ],
 };
 
@@ -60,9 +70,7 @@ function BaseLayout() {
             route={routeList}
             menuFooterRender={() => (
               <div className="text-center">
-                <Button autoInsertSpace={false} size="small">
-                  <Link to="/login">登录</Link>
-                </Button>
+                <Link to="/login">登录</Link>
               </div>
             )}
           >
