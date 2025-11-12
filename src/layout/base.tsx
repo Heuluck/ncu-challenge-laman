@@ -25,9 +25,14 @@ const routeList = {
       icon: <HomeFilled />,
     },
     {
-      path: "/raman",
       name: "拉曼光谱",
       icon: <DotChartOutlined />,
+      children: [
+        {
+          path: "/raman",
+          name: "示例图",
+        },
+      ],
     },
     {
       path: "/user",

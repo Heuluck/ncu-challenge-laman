@@ -1,5 +1,5 @@
 import { Line, type LineConfig } from "@ant-design/charts";
-import ramanTestData from "../test/raman-test-data";
+import ramanTestData from "../../test/raman-test-data";
 
 const DemoLine = () => {
   const data = ramanTestData.data;
