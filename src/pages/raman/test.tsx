@@ -7,20 +7,30 @@ import { csvToData } from "../../utils/csv";
 const { Dragger } = Upload;
 
 const DemoLine = () => {
-  const [data, setData] = useState<{
+  const [ramanData, setRamanData] = useState<{
     name: string;
     data: { wavelength: number; intensity: number }[];
   }>();
 
   const config: LineConfig = {
-    data: data?.data,
+    data: ramanData?.data,
     title: {
-      title: data?.name || "拉曼光谱示例图",
+      title: ramanData?.name || "拉曼光谱示例图",
       subtitle: "拉曼光谱示例图",
     },
     xField: "wavelength",
     yField: "intensity",
     width: 900,
+    tooltip: {
+      title: "",
+      items: [
+        (datum, index, data, column) => ({
+          name: index && `(${data?.[index]?.wavelength},${column.y.value[index]})`,
+          value: "",
+          custom: "...",
+        }),
+      ],
+    },
     axis: {
       x: {
         title: "拉曼波长（1/cm）",
@@ -35,7 +45,7 @@ const DemoLine = () => {
   };
   return (
     <div className="flex flex-col items-center overflow-hidden">
-      {data && (
+      {ramanData && (
         <div className="w-full max-w-[900px] overflow-scroll">
           <div className="w-[900px]">
             <Line {...config} />
@@ -55,7 +65,7 @@ const DemoLine = () => {
             reader.onload = (e) => {
               const text = e.target?.result as string;
               const parsed = csvToData(text);
-              setData({
+              setRamanData({
                 name:
                   currentFile.originFileObj?.name?.replace(/\.csv$/i, "") ||
                   "未知文档名",
