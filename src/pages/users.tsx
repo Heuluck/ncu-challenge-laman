@@ -3,7 +3,7 @@ import { ProTable } from "@ant-design/pro-components";
 import { Button } from "antd";
 
 export type TableListItem = {
-  name: string; // 用户名
+  username: string; // 用户名
   userPermission: string; // 权限
   department: string; // 部门
   phone: string; // 电话
@@ -11,13 +11,13 @@ export type TableListItem = {
 
 const tableListDataSource: TableListItem[] = [
   {
-    name: "张三",
+    username: "张三",
     userPermission: "管理员",
     department: "技术部",
     phone: "123-456-7890",
   },
   {
-    name: "李四",
+    username: "李四",
     userPermission: "用户",
     department: "市场部",
     phone: "098-765-4321",
@@ -25,7 +25,7 @@ const tableListDataSource: TableListItem[] = [
 ];
 
 const columns: ProColumns<TableListItem>[] = [
-  { title: "用户名", dataIndex: "name", key: "name", fixed: "left", width: 70 },
+  { title: "用户名", dataIndex: "username", key: "username", fixed: "left", width: 70 },
   { title: "权限", dataIndex: "userPermission", key: "userPermission" },
   { title: "部门", dataIndex: "department", key: "department" },
   { title: "电话", dataIndex: "phone", key: "phone" },

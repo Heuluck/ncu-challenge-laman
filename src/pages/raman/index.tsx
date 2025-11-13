@@ -1,35 +1,67 @@
-import { Line, type LineConfig } from "@ant-design/charts";
-import ramanTestData from "../../test/raman-test-data";
+import type { ProColumns } from "@ant-design/pro-components";
+import { ProTable } from "@ant-design/pro-components";
+import { Button, Flex } from "antd";
 
-const DemoLine = () => {
-  const data = ramanTestData.data;
-  const config: LineConfig = {
-    data,
-    title: { title: ramanTestData.name, subtitle: "拉曼光谱示例图" },
-    xField: "wavelength",
-    yField: "intensity",
-    width: 900,
-    axis: {
-      x: {
-        title: "拉曼波长（1/cm）",
-      },
-      y: {
-        title: "强度",
-      },
-    },
-    style: {
-      lineWidth: 2,
-    },
-  };
-  return (
-    <div className="flex flex-col items-center overflow-hidden">
-      <div className="overflow-scroll w-full max-w-[900px]">
-        <div className="w-[900px]">
-        <Line {...config} />
-        </div>
-      </div>
-    </div>
-  );
+export type TableListItem = {
+  name: string; // csv 文件名
+  filesize: string; // 文件大小
 };
 
-export default DemoLine;
+const tableListDataSource: TableListItem[] = [
+  {
+    name: "ZS-00001",
+    filesize: "15MB",
+  },
+  {
+    name: "ZS-00002",
+    filesize: "20MB",
+  },
+];
+
+const columns: ProColumns<TableListItem>[] = [
+  { title: "文件名", dataIndex: "name", key: "name", fixed: "left" },
+  { title: "文件大小", dataIndex: "filesize", key: "filesize", hideInSearch: true },
+  {
+    title: "操作",
+    valueType: "option",
+    render: () => {
+      return (
+        <Flex gap={8}>
+          <Button type="primary">查看</Button>
+          <Button>下载</Button>
+        </Flex>
+      );
+    },
+    fixed: "right",
+    width: 200,
+  },
+];
+
+function RamanListPage() {
+  return (
+    <ProTable<TableListItem>
+      columns={columns}
+      request={(params, sorter, filter) => {
+        console.log(params, sorter, filter);
+        return Promise.resolve({
+          data: tableListDataSource,
+          success: true,
+        });
+      }}
+      cardBordered
+      search={{
+        labelWidth: "auto",
+      }}
+      scroll={{ x: 800 }}
+      rowKey="key"
+      pagination={{
+        showQuickJumper: true,
+      }}
+      dateFormatter="string"
+      headerTitle="表格标题"
+      toolBarRender={() => []}
+    />
+  );
+}
+
+export default RamanListPage;
