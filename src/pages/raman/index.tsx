@@ -1,6 +1,8 @@
 import type { ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button, Flex } from "antd";
+import { Button, Flex, Modal } from "antd";
+
+const { confirm } = Modal;
 
 export type TableListItem = {
   name: string; // csv 文件名
@@ -29,11 +31,16 @@ const columns: ProColumns<TableListItem>[] = [
         <Flex gap={8}>
           <Button type="primary">查看</Button>
           <Button>下载</Button>
+          <Button onClick={()=>{
+            confirm({
+              title: "确认删除",
+              onOk(){},
+              onCancel(){}
+            })
+          }} danger>删除</Button>
         </Flex>
       );
     },
-    fixed: "right",
-    width: 200,
   },
 ];
 
