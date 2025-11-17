@@ -13,7 +13,7 @@ import {
 } from "@ant-design/pro-components";
 import { Button, Form, message } from "antd";
 
-export type TableListItem = {
+export type PatientListItem = {
   id: number; // 编号
   abbr: string; // 缩写
   time: number; // 时间（时间戳）
@@ -25,17 +25,17 @@ export type TableListItem = {
   age: number; // 年龄
   caseNo: string; // 病案号
   diagnosis: string; // 诊断
-  isTested: string; // 是否已检
-  tStage: string; // T 分期
-  nStage: string; // N 分期
-  mStage: string; // M 分期
-  stage: string; // 分期组合
+  isTested: boolean; // 是否已检
+  tStage?: string; // T 分期
+  nStage?: string; // N 分期
+  mStage?: string; // M 分期
+  stage?: string; // 分期组合
   preTreatment: string; // 采样前是否接受治疗
-  treatmentType: string; // 接受何种治疗
+  treatmentType?: string; // 接受何种治疗
   memo: string; // 备注
 };
 
-const tableListDataSource: TableListItem[] = [
+const tableListDataSource: PatientListItem[] = [
   {
     id: 1,
     abbr: "XM",
@@ -48,7 +48,7 @@ const tableListDataSource: TableListItem[] = [
     age: 50,
     caseNo: "1234567",
     diagnosis: "直肠腺癌",
-    isTested: "是",
+    isTested: true,
     tStage: "T2",
     nStage: "N0",
     mStage: "M0",
@@ -69,7 +69,7 @@ const tableListDataSource: TableListItem[] = [
     age: 90,
     caseNo: "7654321",
     diagnosis: "胃癌",
-    isTested: "是",
+    isTested: true,
     tStage: "T1",
     nStage: "N2",
     mStage: "M3",
@@ -80,7 +80,7 @@ const tableListDataSource: TableListItem[] = [
   },
 ];
 
-const columns: ProColumns<TableListItem>[] = [
+const columns: ProColumns<PatientListItem>[] = [
   {
     title: "编号",
     dataIndex: "id",
@@ -104,7 +104,7 @@ const columns: ProColumns<TableListItem>[] = [
   { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
   { title: "病案号", dataIndex: "caseNo", key: "caseNo" },
   { title: "诊断", dataIndex: "diagnosis", key: "diagnosis" },
-  { title: "是否已检", dataIndex: "isTested", key: "isTested" },
+  { title: "是否已检", dataIndex: "isTested", key: "isTested", valueType: "switch" },
   {
     title: "TNM 分期",
     key: "tnmStage",
@@ -133,7 +133,7 @@ function IndexPage() {
     const [form] = Form.useForm<{ name: string; company: string }>();
 
     return (
-      <DrawerForm<Omit<TableListItem, "id">>
+      <DrawerForm<Omit<PatientListItem, "id">>
         title="添加病人数据"
         form={form}
         trigger={
@@ -370,7 +370,7 @@ function IndexPage() {
   };
 
   return (
-    <ProTable<TableListItem>
+    <ProTable<PatientListItem>
       columns={columns}
       request={(params, sorter, filter) => {
         console.log(params, sorter, filter);

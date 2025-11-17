@@ -7,7 +7,7 @@ import {
 } from "@ant-design/pro-components";
 import { Button, Form, message } from "antd";
 
-export type TableListItem = {
+export type UserListItem = {
   username: string; // 用户名
   /**
    * 超级管理员：可授予权限、上传/下载文件、增删用户
@@ -19,7 +19,7 @@ export type TableListItem = {
   phone?: string; // 电话
 };
 
-const tableListDataSource: TableListItem[] = [
+const tableListDataSource: UserListItem[] = [
   {
     username: "张三",
     userPermission: "超级管理员",
@@ -39,7 +39,7 @@ const tableListDataSource: TableListItem[] = [
   },
 ];
 
-const columns: ProColumns<TableListItem>[] = [
+const columns: ProColumns<UserListItem>[] = [
   {
     title: "用户名",
     dataIndex: "username",
@@ -70,7 +70,7 @@ function UserPage() {
     const [form] = Form.useForm<{ username: string }>();
 
     return (
-      <DrawerForm<Omit<TableListItem, "id">>
+      <DrawerForm<Omit<UserListItem, "id">>
         title="创建用户"
         form={form}
         trigger={<Button type="primary">创建用户</Button>}
@@ -100,7 +100,7 @@ function UserPage() {
     );
   };
   return (
-    <ProTable<TableListItem>
+    <ProTable<UserListItem>
       columns={columns}
       request={(params, sorter, filter) => {
         console.log(params, sorter, filter);
