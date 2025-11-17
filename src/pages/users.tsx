@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import type { ProColumns } from "@ant-design/pro-components";
 import {
   ProTable,
@@ -73,7 +74,12 @@ function UserPage() {
       <DrawerForm<Omit<UserListItem, "id">>
         title="创建用户"
         form={form}
-        trigger={<Button type="primary">创建用户</Button>}
+        trigger={
+          <Button type="primary">
+            <PlusOutlined />
+            创建用户
+          </Button>
+        }
         autoFocusFirstInput
         drawerProps={{ destroyOnHidden: true }}
         submitTimeout={2000}

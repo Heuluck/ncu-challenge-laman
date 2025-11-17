@@ -1,3 +1,4 @@
+import { PlusOutlined } from "@ant-design/icons";
 import type { ProColumns } from "@ant-design/pro-components";
 import {
   ProTable,
@@ -71,7 +72,12 @@ function RamanListPage() {
       <DrawerForm<Partial<TableListItem>>
         title="上传 CSV 文件"
         form={form}
-        trigger={<Button type="primary">上传文件</Button>}
+        trigger={
+          <Button type="primary">
+            <PlusOutlined />
+            上传文件
+          </Button>
+        }
         autoFocusFirstInput
         drawerProps={{ destroyOnHidden: true }}
         submitTimeout={2000}
@@ -87,7 +93,7 @@ function RamanListPage() {
           label="csv 文件"
           name="csvFile"
           fieldProps={{
-            multiple: true
+            multiple: true,
           }}
           accept=".csv"
           rules={[{ required: true, message: "请上传至少一个 CSV 文件" }]}
