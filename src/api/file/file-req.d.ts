@@ -33,13 +33,6 @@ export interface FileListQuery {
 }
 
 /**
- * FilePreviewRequest
- */
-export interface FilePreviewRequest {
-  id: number;
-}
-
-/**
  * DeleteFileRequest
  */
 export interface DeleteFileRequest {

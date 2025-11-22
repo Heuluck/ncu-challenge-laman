@@ -48,17 +48,6 @@ export interface FileListResponse {
   } | null;
 }
 
-export interface FilePreviewResponse {
-  msg?: string;
-  status?: number;
-  data?: {
-    id?: number;
-    previewUrl?: string;
-    previewType?: string;
-    inline?: boolean;
-  } | null;
-}
-
 export interface FileTypesResponse {
   msg?: string;
   status?: number;

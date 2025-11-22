@@ -3,7 +3,7 @@ const apiPaths = {
     login: '/auth/login',
     register: '/auth/register',
     me: '/auth/me',
-    userList: '/auth/user-list',
+    list: '/auth/user-list',
     updateProfile: '/auth/profile',
     updatePermission: '/auth/update-permission',
     delete: '/auth/delete',
