@@ -17,6 +17,7 @@
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@tailwindcss/vite": "^4.1.17",
     "antd": "^5.28.0",
+    "axios": "^1.13.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.9.5",
