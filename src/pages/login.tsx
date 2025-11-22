@@ -1,9 +1,16 @@
 import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { LoginForm, ProFormText } from "@ant-design/pro-components";
 import useBack from "../hook/useBack";
+import { message } from "antd";
+import { Login } from "../api/user/user";
+import { useNavigate } from "react-router";
 
 function LoginPage() {
   const back = useBack("/");
+  const navigate = useNavigate();
+  if (localStorage.getItem("authToken")) {
+    navigate("/");
+  }
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
       <div
@@ -20,7 +27,23 @@ function LoginPage() {
           <LeftOutlined />
         </button>
         <div className="m-8">
-          <LoginForm title="拉曼光谱数据库">
+          <LoginForm
+            title="拉曼光谱数据库"
+            onFinish={async (e: { username: string; password: string }) => {
+              try {
+                const res = await Login(e);
+                if (res.data) {
+                  localStorage.setItem("authToken", res.data);
+                  navigate("/");
+                } else {
+                  message.error(res.msg || "登录失败");
+                }
+              } catch (err) {
+                console.log(err);
+                return;
+              }
+            }}
+          >
             <div className="mt-8" />
             <ProFormText
               name="username"
@@ -55,6 +78,6 @@ function LoginPage() {
       </div>
     </div>
   );
-};
+}
 
 export default LoginPage;

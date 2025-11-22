@@ -1,4 +1,5 @@
-import axios from "axios";
+import { message } from "antd";
+import axios, { AxiosError } from "axios";
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -19,29 +20,52 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
-    // 对请求错误做些什么
+    console.error(error);
+    message.error("请求出现错误");
     return Promise.reject(error);
-  }
+  },
 );
 
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
+    if (response.data.status !== 0 || response.status !== 200) {
+      message.error(response?.data?.msg || "请求出错");
+      // 服务器响应了状态码，但不是2xx
+      console.error("请求响应出错：", response.status, response.data);
+      return Promise.reject(
+        new AxiosError(
+          response.data.msg || "请求失败",
+          String(response.status),
+          response.config,
+          response.request,
+          response,
+        ),
+      );
+    }
     // 对响应数据做点什么
     return response.data;
   },
   (error) => {
     // 对响应错误做点什么
-    if (error.response) {
-      // 服务器响应了状态码，但不是2xx
-      console.error("Response error:", error.response.status, error.response.data);
-    } else if (error.request) {
-      // 请求已发出，但没有收到响应
-      console.error("No response received:", error.request);
+    if (axios.isAxiosError(error)) {
+      if (error.response) {
+        message.error(error.response?.data?.msg || error.message);
+        // 服务器响应了状态码，但不是2xx
+        console.error(
+          "请求响应出错：",
+          error.response.status,
+          error.response.data,
+        );
+      } else if (error.request) {
+        // 请求已发出，但没有收到响应
+        message.error("未收到服务器响应");
+        console.error("请求已发出，但没有收到响应：", error.request);
+      }
     } else {
-      // 其他错误
-      console.error("Error:", error.message);
+      message.error("请求错误");
+      console.error("请求错误：", error);
     }
     return Promise.reject(error);
-  }
+  },
 );
