@@ -14,7 +14,7 @@ import {
 } from "@ant-design/pro-components";
 import { ConfigProvider } from "antd";
 import { useState } from "react";
-import { Link, Outlet, useLocation, useNavigate } from "react-router";
+import { Link, Outlet, useLocation } from "react-router";
 
 const routeList = {
   path: "/",
@@ -48,7 +48,6 @@ const routeList = {
 
 function BaseLayout() {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>();
-  const navigate = useNavigate();
   const location = useLocation();
   return (
     <div id="pro-layout-container">
@@ -64,12 +63,6 @@ function BaseLayout() {
             {...settings}
             title="拉曼光谱数据库"
             logo={<AreaChartOutlined />}
-            onPageChange={(loc) => {
-              if (loc?.pathname) {
-                console.log(loc.pathname);
-                navigate(loc.pathname);
-              }
-            }}
             location={{
               pathname: location.pathname,
             }}

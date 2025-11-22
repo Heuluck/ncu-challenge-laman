@@ -2,15 +2,21 @@ import { LeftOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { LoginForm, ProFormText } from "@ant-design/pro-components";
 import useBack from "../hook/useBack";
 import { message } from "antd";
-import { Login } from "../api/user/user";
+import { Login, Me } from "../api/user/user";
 import { useNavigate } from "react-router";
+import useUserStore from "../store/user";
+import { useEffect } from "react";
 
 function LoginPage() {
   const back = useBack("/");
   const navigate = useNavigate();
-  if (localStorage.getItem("authToken")) {
-    navigate("/");
-  }
+  const userStore = useUserStore();
+  useEffect(() => {
+    if (localStorage.getItem("authToken") && localStorage.getItem("userData")) {
+      navigate("/");
+    }
+  }, []);
+
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
       <div
@@ -32,11 +38,23 @@ function LoginPage() {
             onFinish={async (e: { username: string; password: string }) => {
               try {
                 const res = await Login(e);
-                if (res.data) {
-                  localStorage.setItem("authToken", res.data);
-                  navigate("/");
-                } else {
+                if (!res.data) {
                   message.error(res.msg || "登录失败");
+                  return;
+                }
+                localStorage.setItem("authToken", res.data);
+                try {
+                  const meRes = await Me();
+                  if (!meRes.data) {
+                    message.error("获取用户信息失败");
+                    return;
+                  }
+                  userStore.setUserData(meRes.data);
+                  localStorage.setItem("userData", JSON.stringify(meRes.data));
+                  navigate("/");
+                } catch (err) {
+                  localStorage.removeItem("authToken");
+                  message.error(res.msg || "登录并获取用户信息失败");
                 }
               } catch (err) {
                 console.log(err);
