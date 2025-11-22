@@ -15,6 +15,7 @@ import {
 import { ConfigProvider } from "antd";
 import { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router";
+import useUserStore from "../store/user";
 
 const routeList = {
   path: "/",
@@ -49,6 +50,7 @@ const routeList = {
 function BaseLayout() {
   const [settings, setSetting] = useState<Partial<ProSettings> | undefined>();
   const location = useLocation();
+  const userStore = useUserStore();
   return (
     <div id="pro-layout-container">
       <ProConfigProvider hashed={false}>
@@ -72,7 +74,7 @@ function BaseLayout() {
             route={routeList}
             menuFooterRender={() => (
               <div className="text-center">
-                <Link to="/login">登录</Link>
+                {userStore.userData.username ? userStore.userData.username : <Link to="/login">登录</Link>}
               </div>
             )}
           >
