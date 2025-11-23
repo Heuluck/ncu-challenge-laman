@@ -14,10 +14,7 @@ import {
 import { Button, Form, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {
-  CreatePatient,
-  UpdatePatient,
-} from "../../api/patient/patient";
+import { CreatePatient, UpdatePatient } from "../../api/patient/patient";
 import type { PatientListItem } from "../../api/patient/patient-res";
 
 type Props = {
@@ -69,7 +66,17 @@ function CreatePatientDrawer({
       }}
       submitTimeout={2000}
       onFinish={async (values) => {
-        if (editData.isEdit)
+        if (editData.isEdit) {
+          if (!values.isTested) {
+            values.group = null;
+            values.tStage = null;
+            values.nStage = null;
+            values.mStage = null;
+            values.stage = null;
+          }
+          if (!values.preTreatment) {
+            values.treatmentType = null;
+          }
           try {
             values.time = dayjs(values.time).valueOf() / 1000;
             await UpdatePatient({ id: editData.id, ...values });
@@ -81,6 +88,7 @@ function CreatePatientDrawer({
             message.error("修改失败，请重试");
             return false;
           }
+        }
         try {
           values.time = dayjs(values.time).valueOf() / 1000;
           await CreatePatient(values);
@@ -167,7 +175,10 @@ function CreatePatientDrawer({
         name="isTested"
         radioType="button"
         label="是否已检"
-        options={[{ label: "是", value: true }, { label: "否", value: false }]}
+        options={[
+          { label: "是", value: true },
+          { label: "否", value: false },
+        ]}
         rules={[{ required: true }]}
       />
       <ProFormDependency name={["isTested"]}>
@@ -179,7 +190,10 @@ function CreatePatientDrawer({
                   name="isNewGroup"
                   radioType="button"
                   label="是否为新组别"
-                  options={[{ label: "新建组别", value: true }, { label: "已有组别", value: false }]}
+                  options={[
+                    { label: "新建组别", value: true },
+                    { label: "已有组别", value: false },
+                  ]}
                   rules={[{ required: true }]}
                 />
                 <ProFormDependency name={["isNewGroup"]}>
@@ -209,11 +223,34 @@ function CreatePatientDrawer({
                   }}
                 </ProFormDependency>
                 <ProForm.Group>
-                  <ProFormText name="tStage" width="sm" label="T 分期" placeholder="请输入 T 分期" rules={[{ required: true }]} />
-                  <ProFormText name="nStage" width="sm" label="N 分期" placeholder="请输入 N 分期" rules={[{ required: true }]} />
-                  <ProFormText name="mStage" width="sm" label="M 分期" placeholder="请输入 M 分期" rules={[{ required: true }]} />
+                  <ProFormText
+                    name="tStage"
+                    width="sm"
+                    label="T 分期"
+                    placeholder="请输入 T 分期"
+                    rules={[{ required: true }]}
+                  />
+                  <ProFormText
+                    name="nStage"
+                    width="sm"
+                    label="N 分期"
+                    placeholder="请输入 N 分期"
+                    rules={[{ required: true }]}
+                  />
+                  <ProFormText
+                    name="mStage"
+                    width="sm"
+                    label="M 分期"
+                    placeholder="请输入 M 分期"
+                    rules={[{ required: true }]}
+                  />
                 </ProForm.Group>
-                <ProFormText name="stage" width="md" label="分期组合" placeholder="请输入分期组合" />
+                <ProFormText
+                  name="stage"
+                  width="md"
+                  label="分期组合"
+                  placeholder="请输入分期组合"
+                />
               </>
             );
           }
@@ -224,14 +261,23 @@ function CreatePatientDrawer({
         name="preTreatment"
         radioType="button"
         label="采样前是否接受治疗"
-        options={[{ label: "是", value: true }, { label: "否", value: false }]}
+        options={[
+          { label: "是", value: true },
+          { label: "否", value: false },
+        ]}
         rules={[{ required: true }]}
       />
       <ProFormDependency name={["preTreatment"]}>
         {({ preTreatment }) => {
           if (preTreatment) {
             return (
-              <ProFormText name="treatmentType" width="md" label="接受何种治疗" placeholder="请输入接受的治疗类型" rules={[{ required: true }]} />
+              <ProFormText
+                name="treatmentType"
+                width="md"
+                label="接受何种治疗"
+                placeholder="请输入接受的治疗类型"
+                rules={[{ required: true }]}
+              />
             );
           }
           return null;

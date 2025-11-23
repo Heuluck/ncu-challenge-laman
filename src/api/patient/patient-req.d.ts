@@ -1,68 +1,56 @@
+import type { PatientListItem } from "./patient-res";
+
 /**
  * PatientCreate
  */
-export interface PatientCreate {
-  name: string;
-  serialNo: string;
-  abbr?: string;
-  time?: number;
-  inpatientOutpatient?: "住院" | "门诊";
-  group?: string;
-  gender?: string;
-  age?: number;
-  caseNo?: string;
-  diagnosis?: string;
-  isTested?: boolean;
-  preTreatment?: boolean;
-  treatmentType?: string;
-  memo?: string;
-}
+export interface PatientCreate 
+  extends Omit<PatientListItem, "createdAt", "id"> {}
 
 /**
  * PatientListQuery
  */
 export interface PatientListQuery {
-    abbr?: string;
-    /**
-     * 年龄上限（包含）
-     */
-    ageMax?: number;
-    /**
-     * 年龄下限（包含）
-     */
-    ageMin?: number;
-    caseNo?: string;
-    /**
-     * 创建者用户ID
-     */
-    createdBy?: number;
-    diagnosis?: string;
-    /**
-     * 男/女/未知/其他
-     */
-    gender?: string;
-    group?: string;
-    inpatientOutpatient?: string;
-    isTested?: boolean;
-    limit?: number;
-    memo?: string;
-    mStage?: string;
-    name?: string;
-    nStage?: string;
-    page?: number;
-    preTreatment?: boolean;
-    serialNo?: string;
-    stage?: string;
-    /**
-     * 结束时间（ISO 或 与数据库一致的格式）
-     */
-    timeEnd?: string;
-    /**
-     * 起始时间（ISO 或 与数据库一致的格式）
-     */
-    timeStart?: string;
-    treatmentType?: string;
-    tStage?: string;
+  abbr?: string;
+  /**
+   * 年龄上限（包含）
+   */
+  ageMax?: number;
+  /**
+   * 年龄下限（包含）
+   */
+  ageMin?: number;
+  caseNo?: string;
+  /**
+   * 创建者用户ID
+   */
+  createdBy?: number;
+  diagnosis?: string;
+  /**
+   * 男/女/未知/其他
+   */
+  gender?: string;
+  group?: string;
+  inpatientOutpatient?: string;
+  isTested?: boolean;
+  limit?: number;
+  memo?: string;
+  mStage?: string;
+  name?: string;
+  nStage?: string;
+  page?: number;
+  preTreatment?: boolean;
+  serialNo?: string;
+  stage?: string;
+  /**
+   * 结束时间（ISO 或 与数据库一致的格式）
+   */
+  timeEnd?: string;
+  /**
+   * 起始时间（ISO 或 与数据库一致的格式）
+   */
+  timeStart?: string;
+  treatmentType?: string;
+  tStage?: string;
 }
 
 /**
@@ -75,23 +63,8 @@ export interface GetDetailRequest {
 /**
  * UpdatePatientRequest
  */
-export interface UpdatePatientRequest {
-  id: number;
-  name?: string;
-  serialNo?: string;
-  abbr?: string;
-  time?: number;
-  inpatientOutpatient?: "住院" | "门诊";
-  group?: string;
-  gender?: string;
-  age?: number;
-  caseNo?: string;
-  diagnosis?: string;
-  isTested?: boolean;
-  preTreatment?: boolean;
-  treatmentType?: string;
-  memo?: string;
-}
+export interface UpdatePatientRequest
+  extends Omit<PatientListItem, "createdAt"> {}
 
 /**
  * DeletePatientRequest
