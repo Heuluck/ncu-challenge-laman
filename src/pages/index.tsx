@@ -23,6 +23,20 @@ import type { PatientListItem } from "../api/patient/patient-res";
 import dayjs from "dayjs";
 import { useRef } from "react";
 
+const requestGroups =async () => {
+      try {
+        const data = await GetPatientGroups();
+        const groups = data.data?.groups || [];
+        return groups.map((group) => ({
+          label: group,
+          value: group,
+        }));
+      } catch (e) {
+        console.error("获取组别列表失败:", e);
+      }
+      return [];
+    }
+
 const columns: ProColumns<PatientListItem>[] = [
   {
     title: "编号",
@@ -75,19 +89,7 @@ const columns: ProColumns<PatientListItem>[] = [
     renderFormItem(_, config, form) {
       return <ProFormSelect showSearch {...config} {...form} />;
     },
-    request: async () => {
-      try {
-        const data = await GetPatientGroups();
-        const groups = data.data?.groups || [];
-        return groups.map((group) => ({
-          label: group,
-          value: group,
-        }));
-      } catch (e) {
-        console.error("获取组别列表失败:", e);
-      }
-      return [];
-    },
+    request: requestGroups,
   },
   {
     title: "时间",
@@ -318,11 +320,13 @@ function IndexPage() {
             if (isTested) {
               return (
                 <>
-                  <ProFormText
+                  <ProFormSelect
                     name="group"
                     width="md"
                     label="组别"
                     placeholder="请输入组别"
+                    showSearch
+                    request={requestGroups}
                   />
                   <ProForm.Group>
                     <ProFormText
