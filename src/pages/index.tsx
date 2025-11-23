@@ -23,145 +23,145 @@ import type { PatientListItem } from "../api/patient/patient-res";
 import dayjs from "dayjs";
 import { useRef } from "react";
 
+const columns: ProColumns<PatientListItem>[] = [
+  {
+    title: "编号",
+    dataIndex: "id",
+    key: "id",
+    fixed: "left",
+    width: 60,
+    sorter: (a, b) => (a?.id ?? 0) - (b?.id ?? 0),
+    hideInSearch: true,
+  },
+  { title: "姓名", dataIndex: "name", key: "name", fixed: "left", width: 70 },
+  { title: "缩写", dataIndex: "abbr", key: "abbr" },
+  { title: "性别", dataIndex: "gender", key: "gender" },
+  {
+    title: "年龄",
+    dataIndex: "age",
+    key: "age",
+    renderFormItem: () => (
+      <ProFormSlider
+        min={0}
+        max={150}
+        range
+        fieldProps={{ defaultValue: [0, 150] }}
+      />
+    ),
+    search: {
+      transform: (value) => ({
+        ageMin: value[0],
+        ageMax: value[1],
+      }),
+    },
+  },
+  {
+    title: "住院/门诊",
+    dataIndex: "inpatientOutpatient",
+    key: "inpatientOutpatient",
+    width: 80,
+    valueType: "select",
+    valueEnum: {
+      住院: { text: "住院" },
+      门诊: { text: "门诊" },
+    },
+  },
+  {
+    title: "组别",
+    dataIndex: "group",
+    key: "group",
+    valueType: "select",
+    width: 100,
+    renderFormItem(_, config, form) {
+      return <ProFormSelect showSearch {...config} {...form} />;
+    },
+    request: async () => {
+      try {
+        const data = await GetPatientGroups();
+        const groups = data.data?.groups || [];
+        return groups.map((group) => ({
+          label: group,
+          value: group,
+        }));
+      } catch (e) {
+        console.error("获取组别列表失败:", e);
+      }
+      return [];
+    },
+  },
+  {
+    title: "时间",
+    dataIndex: "time",
+    key: "time",
+    valueType: "dateTime",
+    renderFormItem: () => (
+      <ProFormDateRangePicker fieldProps={{ allowEmpty: true }} />
+    ),
+    search: {
+      transform: (value) => ({
+        timeStart: Math.floor(dayjs(value[0]).valueOf() / 1000),
+        timeEnd: Math.floor(dayjs(value[1]).valueOf() / 1000),
+      }),
+    },
+    width: 120,
+    render: (_, record) =>
+      record.time
+        ? dayjs(Number(record.time) * 1000)
+            .locale("zh-cn")
+            .format("YYYY-MM-DD")
+        : undefined,
+  },
+  { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
+  { title: "病案号", dataIndex: "caseNo", key: "caseNo" },
+  { title: "诊断", dataIndex: "diagnosis", key: "diagnosis", width: 150 },
+  {
+    title: "是否已检",
+    dataIndex: "isTested",
+    key: "isTested",
+    valueType: "select",
+    valueEnum: {
+      true: { text: "是" },
+      false: { text: "否" },
+    },
+  },
+  {
+    title: "TNM 分期",
+    key: "tnmStage",
+    children: [
+      { title: "T", dataIndex: "tStage", key: "tStage" },
+      { title: "N", dataIndex: "nStage", key: "nStage" },
+      { title: "M", dataIndex: "mStage", key: "mStage" },
+    ],
+    hideInSearch: true,
+  },
+  {
+    title: "分期组合",
+    key: "stageCombination",
+    children: [{ title: "分期", dataIndex: "stage", key: "stage" }],
+    hideInSearch: true,
+  },
+  {
+    title: "采样前是否接受治疗",
+    dataIndex: "preTreatment",
+    key: "preTreatment",
+    valueType: "select",
+    valueEnum: {
+      true: { text: "是" },
+      false: { text: "否" },
+    },
+  },
+  { title: "接受何种治疗", dataIndex: "treatmentType", key: "treatmentType" },
+  {
+    title: "备注",
+    dataIndex: "memo",
+    key: "memo",
+    width: 120,
+    ellipsis: true,
+  },
+];
+
 function IndexPage() {
   const actionRef = useRef<ActionType>(null);
-
-  const columns: ProColumns<PatientListItem>[] = [
-    {
-      title: "编号",
-      dataIndex: "id",
-      key: "id",
-      fixed: "left",
-      width: 60,
-      sorter: (a, b) => (a?.id ?? 0) - (b?.id ?? 0),
-      hideInSearch: true,
-    },
-    { title: "姓名", dataIndex: "name", key: "name", fixed: "left", width: 70 },
-    { title: "缩写", dataIndex: "abbr", key: "abbr" },
-    { title: "性别", dataIndex: "gender", key: "gender" },
-    {
-      title: "年龄",
-      dataIndex: "age",
-      key: "age",
-      renderFormItem: () => (
-        <ProFormSlider
-          min={0}
-          max={150}
-          range
-          fieldProps={{ defaultValue: [0, 150] }}
-        />
-      ),
-      search: {
-        transform: (value) => ({
-          ageMin: value[0],
-          ageMax: value[1],
-        }),
-      },
-    },
-    {
-      title: "住院/门诊",
-      dataIndex: "inpatientOutpatient",
-      key: "inpatientOutpatient",
-      width: 80,
-      valueType: "select",
-      valueEnum: {
-        住院: { text: "住院" },
-        门诊: { text: "门诊" },
-      },
-    },
-    {
-      title: "组别",
-      dataIndex: "group",
-      key: "group",
-      valueType: "select",
-      width: 100,
-      renderFormItem(_, config, form) {
-        return <ProFormSelect showSearch {...config} {...form} />;
-      },
-      request: async () => {
-        try {
-          const data = await GetPatientGroups();
-          const groups = data.data?.groups || [];
-          return groups.map((group) => ({
-            label: group,
-            value: group,
-          }));
-        } catch (e) {
-          console.error("获取组别列表失败:", e);
-        }
-        return [];
-      },
-    },
-    {
-      title: "时间",
-      dataIndex: "time",
-      key: "time",
-      valueType: "dateTime",
-      renderFormItem: () => (
-        <ProFormDateRangePicker fieldProps={{ allowEmpty: true }} />
-      ),
-      search: {
-        transform: (value) => ({
-          timeStart: Math.floor(dayjs(value[0]).valueOf() / 1000),
-          timeEnd: Math.floor(dayjs(value[1]).valueOf() / 1000),
-        }),
-      },
-      width: 120,
-      render: (_, record) =>
-        record.time
-          ? dayjs(Number(record.time) * 1000)
-              .locale("zh-cn")
-              .format("YYYY-MM-DD")
-          : undefined,
-    },
-    { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
-    { title: "病案号", dataIndex: "caseNo", key: "caseNo" },
-    { title: "诊断", dataIndex: "diagnosis", key: "diagnosis", width: 150 },
-    {
-      title: "是否已检",
-      dataIndex: "isTested",
-      key: "isTested",
-      valueType: "select",
-      valueEnum: {
-        true: { text: "是" },
-        false: { text: "否" },
-      },
-    },
-    {
-      title: "TNM 分期",
-      key: "tnmStage",
-      children: [
-        { title: "T", dataIndex: "tStage", key: "tStage" },
-        { title: "N", dataIndex: "nStage", key: "nStage" },
-        { title: "M", dataIndex: "mStage", key: "mStage" },
-      ],
-      hideInSearch: true,
-    },
-    {
-      title: "分期组合",
-      key: "stageCombination",
-      children: [{ title: "分期", dataIndex: "stage", key: "stage" }],
-      hideInSearch: true,
-    },
-    {
-      title: "采样前是否接受治疗",
-      dataIndex: "preTreatment",
-      key: "preTreatment",
-      valueType: "select",
-      valueEnum: {
-        true: { text: "是" },
-        false: { text: "否" },
-      },
-    },
-    { title: "接受何种治疗", dataIndex: "treatmentType", key: "treatmentType" },
-    {
-      title: "备注",
-      dataIndex: "memo",
-      key: "memo",
-      width: 120,
-      ellipsis: true,
-    },
-  ];
 
   const renderCreateAction = () => {
     const [form] = Form.useForm<{ name: string; company: string }>();
@@ -422,7 +422,6 @@ function IndexPage() {
       columns={columns}
       actionRef={actionRef}
       request={async (params, _sorter, _filter) => {
-        // console.log(params, sorter, filter);
         const { current: page = 1, pageSize: limit = 10, ...rest } = params;
         const data = await GetPatientList({
           page,
@@ -431,6 +430,7 @@ function IndexPage() {
         });
         return Promise.resolve({
           data: data.data?.items || [],
+          total: data.data?.pagination?.total || 0,
           success: true,
         });
       }}
@@ -442,6 +442,7 @@ function IndexPage() {
       rowKey="key"
       pagination={{
         showQuickJumper: true,
+        pageSize: 10,
       }}
       dateFormatter="string"
       headerTitle="表格标题"
