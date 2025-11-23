@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router";
 import Login from "./pages/login";
 import BaseLayout from "./layout/base";
 import RequireAuth from "./layout/RequireAuth";
-import Index from "./pages";
+import Index from "./pages/index";
 import UsersPage from "./pages/users";
 import Raman from "./pages/raman";
 import RamanTest from "./pages/raman/test";

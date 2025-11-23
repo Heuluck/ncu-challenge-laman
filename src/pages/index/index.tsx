@@ -18,8 +18,8 @@ import {
   CreatePatient,
   GetPatientGroups,
   GetPatientList,
-} from "../api/patient/patient";
-import type { PatientListItem } from "../api/patient/patient-res";
+} from "../../api/patient/patient";
+import type { PatientListItem } from "../../api/patient/patient-res";
 import dayjs from "dayjs";
 import { useRef } from "react";
 
