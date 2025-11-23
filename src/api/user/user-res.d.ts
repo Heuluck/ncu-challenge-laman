@@ -85,7 +85,7 @@ export interface AuthUpdatePermissionResponse {
  * BaseResponse
  */
 export interface AuthDeleteUserResponse {
-    msg?: string;
-    status?: number;
-    data?: { [key: string]: any } | null;
+  msg?: string;
+  status?: number;
+  data?: { [key: string]: any } | null;
 }

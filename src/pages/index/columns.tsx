@@ -150,31 +150,42 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       valueType: "option",
       key: "option",
       width: 120,
-      render: (_text, record) => isAdmin ? [
-        isAdmin && <Button
-          key="edit"
-          size="small"
-          onClick={() => {
-            setEditData({
-              id: record.id,
-              isEdit: true,
-            });
-            setFormOpen(true);
-            setTimeout(() => {
-              formRef.current?.setFieldsValue({
-                ...record,
-                isNewGroup: record.group ? false : true,
-                time: record.time ? dayjs(Number(record.time) * 1000) : null,
-              });
-            }, 0);
-          }}
-        >
-          编辑
-        </Button>,
-        isSuperAdmin && <Button key="delete" size="small" danger>
-          删除
-        </Button>,
-      ] : <p>无权限操作</p>,
+      render: (_text, record) =>
+        isAdmin ? (
+          [
+            isAdmin && (
+              <Button
+                key="edit"
+                size="small"
+                onClick={() => {
+                  setEditData({
+                    id: record.id,
+                    isEdit: true,
+                  });
+                  setFormOpen(true);
+                  setTimeout(() => {
+                    formRef.current?.setFieldsValue({
+                      ...record,
+                      isNewGroup: record.group ? false : true,
+                      time: record.time
+                        ? dayjs(Number(record.time) * 1000)
+                        : null,
+                    });
+                  }, 0);
+                }}
+              >
+                编辑
+              </Button>
+            ),
+            isSuperAdmin && (
+              <Button key="delete" size="small" danger>
+                删除
+              </Button>
+            ),
+          ]
+        ) : (
+          <p>无权限操作</p>
+        ),
     },
   ];
 

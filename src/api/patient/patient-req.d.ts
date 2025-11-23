@@ -3,7 +3,7 @@ import type { PatientListItem } from "./patient-res";
 /**
  * PatientCreate
  */
-export interface PatientCreate 
+export interface PatientCreate
   extends Omit<PatientListItem, "createdAt", "id"> {}
 
 /**

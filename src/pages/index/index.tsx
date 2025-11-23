@@ -32,7 +32,8 @@ function IndexPage() {
   });
   const userStore = useUserStore();
   const isSuperAdmin = userStore.userData.userPermission === "超级管理员";
-  const isAdmin = userStore.userData.userPermission === "管理员" || isSuperAdmin;
+  const isAdmin =
+    userStore.userData.userPermission === "管理员" || isSuperAdmin;
 
   useEffect(() => {
     formRef.current?.resetFields();
@@ -77,16 +78,18 @@ function IndexPage() {
       headerTitle="表格标题"
       toolBarRender={() => [
         <Button key="out">导出数据</Button>,
-        isAdmin && <CreatePatientDrawer
-          key="create"
-          formOpen={formOpen}
-          setFormOpen={setFormOpen}
-          formRef={formRef}
-          editData={editData}
-          setEditData={setEditData}
-          actionRef={actionRef}
-          requestGroups={requestGroups}
-        />,
+        isAdmin && (
+          <CreatePatientDrawer
+            key="create"
+            formOpen={formOpen}
+            setFormOpen={setFormOpen}
+            formRef={formRef}
+            editData={editData}
+            setEditData={setEditData}
+            actionRef={actionRef}
+            requestGroups={requestGroups}
+          />
+        ),
       ]}
     />
   );

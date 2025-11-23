@@ -12,7 +12,13 @@ function App() {
   return (
     <>
       <Routes>
-        <Route element={<RequireAuth><BaseLayout /></RequireAuth>}>
+        <Route
+          element={
+            <RequireAuth>
+              <BaseLayout />
+            </RequireAuth>
+          }
+        >
           <Route index element={<Index />} />
           <Route path="/user" element={<UsersPage />} />
           <Route path="/raman" element={<Raman />} />

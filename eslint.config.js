@@ -16,8 +16,8 @@ export default defineConfig([
       reactRefresh.configs.vite,
     ],
     rules: {
-      'no-unused-vars': 'warn',
-      'no-unused-imports': 'warn',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
     languageOptions: {
       ecmaVersion: 2020,
