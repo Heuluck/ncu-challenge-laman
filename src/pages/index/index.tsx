@@ -6,6 +6,7 @@ import { GetPatientGroups, GetPatientList } from "../../api/patient/patient";
 import type { PatientListItem } from "../../api/patient/patient-res";
 import { useEffect, useRef, useState } from "react";
 import { getColumns } from "./columns";
+import useUserStore from "../../store/user";
 
 const requestGroups = async () => {
   try {
@@ -29,12 +30,16 @@ function IndexPage() {
     id: -1,
     isEdit: false,
   });
+  const userStore = useUserStore();
+  const isSuperAdmin = userStore.userData.userPermission === "超级管理员";
+  const isAdmin = userStore.userData.userPermission === "管理员" || isSuperAdmin;
 
   useEffect(() => {
     formRef.current?.resetFields();
   }, [editData]);
 
   const columns = getColumns({
+    userData: userStore.userData,
     formRef,
     setEditData,
     setFormOpen,
@@ -72,7 +77,7 @@ function IndexPage() {
       headerTitle="表格标题"
       toolBarRender={() => [
         <Button key="out">导出数据</Button>,
-        <CreatePatientDrawer
+        isAdmin && <CreatePatientDrawer
           key="create"
           formOpen={formOpen}
           setFormOpen={setFormOpen}

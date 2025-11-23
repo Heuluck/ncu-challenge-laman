@@ -8,8 +8,10 @@ import {
 import { Button } from "antd";
 import dayjs from "dayjs";
 import type { PatientListItem } from "../../api/patient/patient-res";
+import type { userData } from "../../api/user/user-res";
 
 export type ColumnsDeps = {
+  userData: userData;
   formRef: React.RefObject<ProFormInstance<any> | null>;
   setEditData: (v: { id: number; isEdit: boolean }) => void;
   setFormOpen: (open: boolean) => void;
@@ -17,7 +19,9 @@ export type ColumnsDeps = {
 };
 
 export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
-  const { formRef, setEditData, setFormOpen, requestGroups } = deps;
+  const { userData, formRef, setEditData, setFormOpen, requestGroups } = deps;
+  const isSuperAdmin = userData.userPermission === "超级管理员";
+  const isAdmin = userData.userPermission === "管理员" || isSuperAdmin;
 
   const columns: ProColumns<PatientListItem>[] = [
     {
@@ -36,7 +40,12 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       dataIndex: "age",
       key: "age",
       renderFormItem: () => (
-        <ProFormSlider min={0} max={150} range fieldProps={{ defaultValue: [0, 150] }} />
+        <ProFormSlider
+          min={0}
+          max={150}
+          range
+          fieldProps={{ defaultValue: [0, 150] }}
+        />
       ),
       search: {
         transform: (value) => ({
@@ -72,7 +81,9 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       dataIndex: "time",
       key: "time",
       valueType: "dateTime",
-      renderFormItem: () => <ProFormDateRangePicker fieldProps={{ allowEmpty: true }} />,
+      renderFormItem: () => (
+        <ProFormDateRangePicker fieldProps={{ allowEmpty: true }} />
+      ),
       search: {
         transform: (value) => ({
           timeStart: Math.floor(dayjs(value[0]).valueOf() / 1000),
@@ -82,7 +93,9 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       width: 120,
       render: (_text, record) =>
         record.time
-          ? dayjs(Number(record.time) * 1000).locale("zh-cn").format("YYYY-MM-DD")
+          ? dayjs(Number(record.time) * 1000)
+              .locale("zh-cn")
+              .format("YYYY-MM-DD")
           : undefined,
     },
     { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
@@ -137,8 +150,8 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       valueType: "option",
       key: "option",
       width: 120,
-      render: (_text, record) => [
-        <Button
+      render: (_text, record) => isAdmin ? [
+        isAdmin && <Button
           key="edit"
           size="small"
           onClick={() => {
@@ -158,10 +171,10 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
         >
           编辑
         </Button>,
-        <Button key="delete" size="small" danger>
+        isSuperAdmin && <Button key="delete" size="small" danger>
           删除
         </Button>,
-      ],
+      ] : <p>无权限操作</p>,
     },
   ];
 
