@@ -24,12 +24,34 @@ export interface DownloadRequest {
  * FileListQuery
  */
 export interface FileListQuery {
-  page?: number;
-  limit?: number;
+  /**
+   * 创建时间结束（ISO）
+   */
+  createdAtEnd?: string;
+  /**
+   * 创建时间起始（ISO）
+   */
+  createdAtStart?: string;
+  description?: string;
   filename?: string;
   fileType?: string;
-  uploadedBy?: number;
-  importedTable?: string;
+  limit?: number;
+  /**
+   * 最大文件大小（字节）
+   */
+  maxSize?: number;
+  mimeType?: string;
+  /**
+   * 最小文件大小（字节）
+   */
+  minSize?: number;
+  originalName?: string;
+  page?: number;
+  uploadedBy?: string;
+  /**
+   * 按上传者用户ID过滤
+   */
+  uploadedById?: number;
 }
 
 /**

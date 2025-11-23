@@ -59,9 +59,6 @@ function BaseLayout() {
     <div id="pro-layout-container">
       <ProConfigProvider hashed={false}>
         <ConfigProvider
-          tooltip={{
-            unique: true,
-          }}
           getTargetContainer={() => {
             return (
               document.getElementById("pro-layout-container") || document.body

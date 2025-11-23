@@ -6,24 +6,25 @@ export interface Pagination {
 }
 
 export interface PatientListItem {
-  id?: number;
-  abbr?: string;
-  time?: number;
-  name?: string;
-  serialNo?: string;
-  inpatientOutpatient?: string;
-  group?: string;
-  gender?: string;
-  age?: number;
-  caseNo?: string;
-  diagnosis?: string;
-  isTested?: boolean;
-  tStage?: string;
-  nStage?: string;
-  mStage?: string;
-  stage?: string;
-  preTreatment?: string | boolean;
-  memo?: string;
+  id: number; // 编号
+  abbr: string; // 缩写
+  time: number; // 时间（时间戳）
+  name: string; // 姓名
+  serialNo: string; // 流水号
+  inpatientOutpatient: "住院" | "门诊"; // 住院/门诊
+  group: string; // 组别
+  gender: string; // 性别
+  age: number; // 年龄
+  caseNo: string; // 病案号
+  diagnosis: string; // 诊断
+  isTested: boolean; // 是否已检
+  tStage?: string; // T 分期
+  nStage?: string; // N 分期
+  mStage?: string; // M 分期
+  stage?: string; // 分期组合
+  preTreatment: boolean; // 采样前是否接受治疗
+  treatmentType?: string; // 接受何种治疗
+  memo: string; // 备注
   createdAt?: string;
 }
 
@@ -82,7 +83,7 @@ export interface PatientGroupsResponse {
   msg?: string;
   status?: number;
   data?: {
-    groups?: { name?: string; count?: number }[];
+    groups?: string[];
   } | null;
 }
 

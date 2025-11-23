@@ -13,11 +13,27 @@ export interface LoginRequest {
  */
 export interface AuthUserListQuery {
   /**
+   * 创建时间结束（ISO）
+   */
+  createdAtEnd?: string;
+  /**
+   * 创建时间起始（ISO）
+   */
+  createdAtStart?: string;
+  /**
    * 按科室/部门模糊搜索
    */
   department?: string;
+  /**
+   * 是否只返回激活用户；未提供则默认为 true
+   */
+  isActive?: boolean;
   limit?: number;
   page?: number;
+  /**
+   * 按电话号码模糊搜索
+   */
+  phone?: string;
   /**
    * 按用户名模糊搜索
    */
@@ -25,7 +41,7 @@ export interface AuthUserListQuery {
   /**
    * 按权限精确匹配（例如：超级管理员/管理员/访客）
    */
-  userPermission?: string;
+  userPermission?: UserPermission;
 }
 
 /**
