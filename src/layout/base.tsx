@@ -34,7 +34,7 @@ const routeList = {
       children: [
         {
           path: "/raman/",
-          name: "示例图",
+          name: "文件列表",
         },
         {
           path: "/raman/test",

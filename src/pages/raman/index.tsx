@@ -7,37 +7,41 @@ import {
   ProFormText,
 } from "@ant-design/pro-components";
 import { Button, Flex, Modal, Form, message } from "antd";
+import fileApi from "../../api/file/file";
+import { toHumanReadableSize } from "../../utils/toHuman";
+import type { FileInfo } from "../../api/file/file-res";
 
 const { confirm } = Modal;
 
 export type TableListItem = {
-  name: string; // csv 文件名
-  filesize: string; // 文件大小
+  originalName?: string; // 原始文件名
+  filename?: string; // csv 文件名
+  size?: number; // 文件大小
   description?: string; // 文件描述
 };
 
-const tableListDataSource: TableListItem[] = [
+const columns: ProColumns<FileInfo>[] = [
   {
-    name: "ZS-00001",
-    filesize: "15MB",
-    description: "这是第一个文件",
+    title: "文件原名",
+    dataIndex: "originalName",
+    key: "originalName",
+    fixed: "left",
   },
-  {
-    name: "ZS-00002",
-    filesize: "20MB",
-    description: "这是第二个文件",
-  },
-];
-
-const columns: ProColumns<TableListItem>[] = [
-  { title: "文件名", dataIndex: "name", key: "name", fixed: "left" },
   {
     title: "文件大小",
-    dataIndex: "filesize",
-    key: "filesize",
+    dataIndex: "size",
+    key: "size",
+    render: (_, entity) => toHumanReadableSize(entity.size),
     hideInSearch: true,
   },
   { title: "文件描述", dataIndex: "description", key: "description" },
+  { title: "文件名", dataIndex: "filename", key: "filename" },
+  {
+    title: "上传者",
+    key: "uploadedBy",
+    render: (_, entity) =>
+      entity.uploadedBy ? `${entity.uploadedBy} - ${entity.uploadedByUsername}` : entity.uploadedByUsername,
+  },
   {
     title: "操作",
     valueType: "option",
@@ -109,12 +113,23 @@ function RamanListPage() {
   };
 
   return (
-    <ProTable<TableListItem>
+    <ProTable<FileInfo>
       columns={columns}
-      request={(params, sorter, filter) => {
-        console.log(params, sorter, filter);
+      columnsState={{
+        defaultValue: {
+          filename: { show: false },
+        },
+      }}
+      request={async (params, _sorter, _filter) => {
+        const { current: page = 1, pageSize: limit = 10, ...rest } = params;
+        const data = await fileApi.GetFileList({
+          page,
+          limit,
+          ...rest,
+        });
         return Promise.resolve({
-          data: tableListDataSource,
+          data: data.data?.files || [],
+          total: data.data?.pagination?.total || 0,
           success: true,
         });
       }}

@@ -56,3 +56,12 @@ export const AuthorizeDownload = (
 ): Promise<res.AuthorizeDownloadResponse> => {
   return instance.post(apiPaths.file.authorizeDownload, data);
 };
+
+export default {
+  UploadFile,
+  DownloadFile,
+  GetFileList,
+  GetFileTypes,
+  DeleteFile,
+  AuthorizeDownload,
+} as const;

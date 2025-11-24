@@ -3,11 +3,11 @@
  */
 
 export interface FileInfo {
-  id?: number;
-  filename?: string;
+  id: number;
+  filename: string;
   originalName?: string;
   mimeType?: string;
-  size?: number;
+  size: number;
   fileType?: string;
   description?: string;
   metadata?: object | string;
@@ -43,7 +43,7 @@ export interface FileListResponse {
   msg?: string;
   status?: number;
   data?: {
-    items?: FileInfo[];
+    files?: FileInfo[];
     pagination?: Pagination;
   } | null;
 }
