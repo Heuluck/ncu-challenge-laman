@@ -150,7 +150,7 @@ function BaseLayout() {
           <SettingDrawer
             pathname={location.pathname}
             enableDarkTheme
-            getContainer={(e: any) => {
+            getContainer={(e: unknown) => {
               if (typeof window === "undefined") return e;
               return document.getElementById("pro-layout-container");
             }}

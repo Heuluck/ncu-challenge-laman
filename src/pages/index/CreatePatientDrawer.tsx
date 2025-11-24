@@ -20,7 +20,7 @@ import type { PatientListItem } from "../../api/patient/patient-res";
 type Props = {
   formOpen: boolean;
   setFormOpen: (open: boolean) => void;
-  formRef: React.RefObject<ProFormInstance<any> | null>;
+  formRef: React.RefObject<ProFormInstance<unknown> | null>;
   editData: { id: number; isEdit: boolean };
   setEditData: (v: { id: number; isEdit: boolean }) => void;
   actionRef: React.RefObject<ActionType | null>;
@@ -84,7 +84,7 @@ function CreatePatientDrawer({
             message.success("修改成功");
             formRef.current?.resetFields();
             return true;
-          } catch (e) {
+          } catch (_e) {
             message.error("修改失败，请重试");
             return false;
           }
@@ -96,7 +96,7 @@ function CreatePatientDrawer({
           message.success("提交成功");
           formRef.current?.resetFields();
           return true;
-        } catch (e) {
+        } catch (_e) {
           message.error("提交失败，请重试");
           return false;
         }

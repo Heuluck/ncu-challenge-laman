@@ -1,5 +1,5 @@
 export const csvToData = (csv: string, insertCategory?: string) => {
-  const regex = /^(\-?\d+\.\d+),(\-?\d+\.\d+)$/gm;
+  const regex = /^(-?\d+\.\d+),(-?\d+\.\d+)$/gm;
   const data: {
     wavelength: number;
     intensity: number;

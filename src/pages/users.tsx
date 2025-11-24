@@ -68,6 +68,7 @@ const columns: ProColumns<UserListItem>[] = [
 
 function UserPage() {
   const renderCreateAction = () => {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [form] = Form.useForm<{ username: string }>();
 
     return (

@@ -39,7 +39,7 @@ function RequireAuth({ children }: Props) {
           localStorage.removeItem("userData");
           if (mounted) setAuthed(false);
         }
-      } catch (err) {
+      } catch (_err) {
         localStorage.removeItem("authToken");
         localStorage.removeItem("userData");
         if (mounted) setAuthed(false);
@@ -53,6 +53,7 @@ function RequireAuth({ children }: Props) {
     return () => {
       mounted = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) {

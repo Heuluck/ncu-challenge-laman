@@ -10,7 +10,7 @@ export interface FileInfo {
   size?: number;
   fileType?: string;
   description?: string;
-  metadata?: { [key: string]: any } | string;
+  metadata?: object | string;
   downloadCount?: number;
   createdAt?: string;
   uploadedBy?: number;
@@ -29,7 +29,7 @@ export type FileDownloadSuccess = Blob | ArrayBuffer | string;
 export interface FileDownloadError {
   msg?: string;
   status?: number;
-  data?: { [key: string]: any } | null;
+  data?: object | null;
 }
 
 export interface Pagination {
@@ -59,7 +59,7 @@ export interface FileTypesResponse {
 export interface FileDeleteResponse {
   msg?: string;
   status?: number;
-  data?: { [key: string]: any } | null;
+  data?: object | null;
 }
 
 export interface AuthorizeDownloadResponse {

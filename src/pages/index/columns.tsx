@@ -12,7 +12,7 @@ import type { userData } from "../../api/user/user-res";
 
 export type ColumnsDeps = {
   userData: userData;
-  formRef: React.RefObject<ProFormInstance<any> | null>;
+  formRef: React.RefObject<ProFormInstance<unknown> | null>;
   setEditData: (v: { id: number; isEdit: boolean }) => void;
   setFormOpen: (open: boolean) => void;
   requestGroups: () => Promise<{ label: string; value: string }[]>;

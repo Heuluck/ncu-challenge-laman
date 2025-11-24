@@ -6,11 +6,11 @@
  * FileUpload
  */
 export interface FileUpload {
-  file: File | Blob | any;
+  file: File | Blob ;
   filename?: string;
   fileType?: string;
   description?: string;
-  metadata?: { [key: string]: any } | string;
+  metadata?: object | string;
 }
 
 /**

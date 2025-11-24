@@ -64,7 +64,7 @@ export interface PatientDetailResponse {
 export interface PatientUpdateResponse {
   msg?: string;
   status?: number;
-  data?: { [key: string]: any } | null;
+  data?: object | null;
 }
 
 /**
@@ -73,7 +73,7 @@ export interface PatientUpdateResponse {
 export interface PatientDeleteResponse {
   msg?: string;
   status?: number;
-  data?: { [key: string]: any } | null;
+  data?: object | null;
 }
 
 /**

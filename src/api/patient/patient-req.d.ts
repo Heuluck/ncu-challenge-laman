@@ -3,8 +3,7 @@ import type { PatientListItem } from "./patient-res";
 /**
  * PatientCreate
  */
-export interface PatientCreate
-  extends Omit<PatientListItem, "createdAt", "id"> {}
+export type PatientCreate = Omit<PatientListItem, "createdAt", "id">
 
 /**
  * PatientListQuery
@@ -63,8 +62,7 @@ export interface GetDetailRequest {
 /**
  * UpdatePatientRequest
  */
-export interface UpdatePatientRequest
-  extends Omit<PatientListItem, "createdAt"> {}
+export type UpdatePatientRequest = Omit<PatientListItem, "createdAt">
 
 /**
  * DeletePatientRequest

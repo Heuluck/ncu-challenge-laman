@@ -15,6 +15,7 @@ function LoginPage() {
     if (localStorage.getItem("authToken") && localStorage.getItem("userData")) {
       navigate("/");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -52,7 +53,7 @@ function LoginPage() {
                   userStore.setUserData(meRes.data);
                   localStorage.setItem("userData", JSON.stringify(meRes.data));
                   navigate("/");
-                } catch (err) {
+                } catch (_err) {
                   localStorage.removeItem("authToken");
                   message.error(res.msg || "登录并获取用户信息失败");
                 }
