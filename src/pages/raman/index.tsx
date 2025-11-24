@@ -6,7 +6,7 @@ import {
   ProFormUploadDragger,
   ProFormText,
 } from "@ant-design/pro-components";
-import { Button, Flex, Modal, Form, message } from "antd";
+import { Button, Flex, Modal, Form, message, Tooltip } from "antd";
 import fileApi from "../../api/file/file";
 import { toHumanReadableSize } from "../../utils/toHuman";
 import type { FileInfo } from "../../api/file/file-res";
@@ -37,10 +37,26 @@ const columns: ProColumns<FileInfo>[] = [
   { title: "文件描述", dataIndex: "description", key: "description" },
   { title: "文件名", dataIndex: "filename", key: "filename" },
   {
+    title: "下载次数",
+    dataIndex: "downloadCount",
+    key: "downloadCount",
+    hideInSearch: true,
+    width: 55,
+  },
+  {
     title: "上传者",
     key: "uploadedBy",
-    render: (_, entity) =>
-      entity.uploadedBy ? `${entity.uploadedBy} - ${entity.uploadedByUsername}` : entity.uploadedByUsername,
+    render: (_, entity) => (
+      <Tooltip
+        title={
+          entity.uploadedBy
+            ? `${entity.uploadedBy} - ${entity.uploadedByUsername}`
+            : entity.uploadedByUsername
+        }
+      >
+        {entity.uploadedByUsername}
+      </Tooltip>
+    ),
   },
   {
     title: "操作",
@@ -48,8 +64,8 @@ const columns: ProColumns<FileInfo>[] = [
     render: () => {
       return (
         <Flex gap={8}>
-          <Button type="primary">查看</Button>
-          <Button>下载</Button>
+          <Button type="primary" size="small">查看</Button>
+          <Button size="small">下载</Button>
           <Button
             onClick={() => {
               confirm({
@@ -59,6 +75,7 @@ const columns: ProColumns<FileInfo>[] = [
               });
             }}
             danger
+            size="small"
           >
             删除
           </Button>
