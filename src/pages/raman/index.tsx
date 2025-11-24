@@ -198,6 +198,7 @@ function RamanListPage() {
       rowKey="key"
       pagination={{
         showQuickJumper: true,
+        pageSize: 10,
       }}
       dateFormatter="string"
       headerTitle="表格标题"
