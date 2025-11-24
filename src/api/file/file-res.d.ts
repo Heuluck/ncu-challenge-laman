@@ -16,6 +16,8 @@ export interface FileInfo {
   uploadedBy?: number;
   uploadedByUsername?: string;
   importedTable?: string;
+  patientId?: number;
+  patientName?: string;
 }
 
 export interface FileUploadResponse {

@@ -1,15 +1,18 @@
 import { PlusOutlined } from "@ant-design/icons";
-import type { ProColumns } from "@ant-design/pro-components";
+import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
   ProTable,
   DrawerForm,
   ProFormUploadDragger,
   ProFormText,
+  ProFormSelect,
 } from "@ant-design/pro-components";
 import { Button, Flex, Modal, Form, message, Tooltip } from "antd";
 import fileApi from "../../api/file/file";
+import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
 import type { FileInfo } from "../../api/file/file-res";
+import { useRef } from "react";
 
 const { confirm } = Modal;
 
@@ -22,10 +25,15 @@ export type TableListItem = {
 
 const columns: ProColumns<FileInfo>[] = [
   {
+    title: "病人",
+    dataIndex: "patientName",
+    key: "patientName",
+    fixed: "left",
+  },
+  {
     title: "文件原名",
     dataIndex: "originalName",
     key: "originalName",
-    fixed: "left",
   },
   {
     title: "文件大小",
@@ -86,6 +94,8 @@ const columns: ProColumns<FileInfo>[] = [
 ];
 
 function RamanListPage() {
+    const actionRef = useRef<ActionType>(null);
+  
   const renderUploadAction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [form] = Form.useForm();
@@ -103,12 +113,25 @@ function RamanListPage() {
         autoFocusFirstInput
         drawerProps={{ destroyOnHidden: true }}
         submitTimeout={2000}
-        onFinish={async (values) => {
-          console.log("上传表单值：", values);
-          message.success("上传成功");
-          return true;
+        onFinish={async (values: unknown) => {
+          try {
+            const v = values as Record<string, unknown>;
+            if (!v.patientId) {
+              message.error("请选择关联病人");
+              return false;
+            }
+
+            await fileApi.UploadFile(v);
+            message.success("上传成功");
+            actionRef.current?.reload();
+            return true;
+          } catch (err) {
+            console.error(err);
+            message.error("上传失败，请重试");
+            return false;
+          }
         }}
-      >
+        >
         <ProFormUploadDragger
           max={20}
           description="支持批量上传最多 20 个 CSV 文件"
@@ -121,9 +144,25 @@ function RamanListPage() {
           rules={[{ required: true, message: "请上传至少一个 CSV 文件" }]}
         />
         <ProFormText
-          name="name"
+          name="description"
           label="文件描述（批量添加）"
           placeholder="文件描述"
+        />
+        <ProFormSelect
+          name="patientId"
+          label="关联病人"
+          width="md"
+          showSearch
+          rules={[{ required: true }]}
+          request={async () => {
+            try {
+              const resp = await GetPatientList({ page: 1, limit: 200 });
+              const items = resp.data?.items || [];
+              return items.map((p) => ({ label: `${p.name} (${p.serialNo})`, value: p.id }));
+            } catch (_) {
+              return [];
+            }
+          }}
         />
       </DrawerForm>
     );
@@ -132,6 +171,7 @@ function RamanListPage() {
   return (
     <ProTable<FileInfo>
       columns={columns}
+      actionRef={actionRef}
       columnsState={{
         defaultValue: {
           filename: { show: false },

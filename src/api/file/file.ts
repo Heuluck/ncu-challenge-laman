@@ -8,9 +8,73 @@ import type * as res from "./file-res";
  * 管理员或超级管理员权限
  */
 export const UploadFile = (
-  data: req.FileUpload,
-): Promise<res.FileUploadResponse> => {
-  return instance.post(apiPaths.file.upload, data);
+  data: FormData | req.FileUpload | Record<string, unknown>,
+): Promise<res.FileUploadResponse | res.FileUploadResponse[]> => {
+  if (data instanceof FormData) {
+    return instance.post(apiPaths.file.upload, data, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  }
+
+  // 将文件项转换为 File/Blob
+  const resolveFileObj = (f: unknown): File | Blob | null => {
+    if (!f) return null;
+    // AntD Upload item shape: { uid, name, status, response, url, originFileObj }
+    const maybe = f as { originFileObj?: File; file?: File } | File | Blob;
+    return (
+      (maybe as { originFileObj?: File }).originFileObj ||
+      (maybe as { file?: File }).file ||
+      (maybe as File)
+    );
+  };
+
+  const payload = data as Record<string, unknown>;
+
+  // 支持批量上传字段名：csvFile / csvFiles / files
+  const fileField =
+    payload.csvFile || payload.csvFiles || payload.files || payload.file;
+
+  // 如果是数组，按后端当前行为逐个单文件上传（每次携带 patientId）
+  if (Array.isArray(fileField)) {
+    const files = fileField as unknown[];
+    const promises: Promise<res.FileUploadResponse>[] = [];
+    for (const f of files) {
+      const fileObj = resolveFileObj(f);
+      if (!fileObj) continue;
+      const form = new FormData();
+      form.append("file", fileObj as Blob);
+      if (payload.patientId != null)
+        form.append("patientId", String(payload.patientId));
+      if (payload.description)
+        form.append("description", String(payload.description));
+      if (payload.fileType) form.append("fileType", String(payload.fileType));
+      promises.push(
+        instance.post(apiPaths.file.upload, form, {
+          headers: { "Content-Type": "multipart/form-data" },
+        }),
+      );
+    }
+    return Promise.all(promises);
+  }
+
+  // 如果是单文件对象或包含 file 字段的对象
+  const singleFile = resolveFileObj(fileField) || payload.file;
+  const form = new FormData();
+  if (singleFile) {
+    form.append("file", singleFile as Blob);
+  } else if (typeof payload.file === "string") {
+    // 支持 file 为字符串（例如后端文件 id 或 base64）
+    form.append("file", String(payload.file));
+  }
+  if (payload.patientId != null)
+    form.append("patientId", String(payload.patientId));
+  if (payload.description)
+    form.append("description", String(payload.description));
+  if (payload.fileType) form.append("fileType", String(payload.fileType));
+
+  return instance.post(apiPaths.file.upload, form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
 };
 
 /**

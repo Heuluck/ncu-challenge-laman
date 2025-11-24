@@ -6,11 +6,13 @@
  * FileUpload
  */
 export interface FileUpload {
-  file: File | Blob ;
-  filename?: string;
-  fileType?: string;
   description?: string;
-  metadata?: object | string;
+  file: string;
+  fileType?: string;
+  /**
+   * 关联的病人 ID，必填
+   */
+  patientId: number;
 }
 
 /**
@@ -52,6 +54,7 @@ export interface FileListQuery {
    * 按上传者用户ID过滤
    */
   uploadedById?: number;
+  patientId?: number;
 }
 
 /**
