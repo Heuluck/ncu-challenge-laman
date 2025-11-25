@@ -33,12 +33,16 @@ export interface AuthMeResponse {
 
 export interface userData {
   id?: number;
-  department?: string;
-  phone?: string;
-  username?: string;
-  userPermission?: string;
+  username: string; // 用户名
+  /**
+   * 超级管理员：可授予权限、上传/下载文件、增删用户
+   * 管理员：可上传/下载文件
+   * 访客：仅查看文件，下载需要超级管理员授权
+   */
+  userPermission: "超级管理员" | "管理员" | "访客"; // 权限
+  department?: string; // 部门
+  phone?: string; // 电话
 }
-
 /**
  * AuthUserListResponse
  *
@@ -88,4 +92,52 @@ export interface AuthDeleteUserResponse {
   msg?: string;
   status?: number;
   data?: object | null;
+}
+
+/**
+ * CreateUserResponse
+ *
+ * BaseResponse
+ */
+export interface CreateUserResponse {
+  msg?: string;
+  status?: number;
+  data?: {
+    password?: string;
+    user?: {
+      data?: userData;
+    };
+  };
+}
+
+/**
+ * AdminUpdateUserResponse
+ *
+ * BaseResponse
+ */
+export interface Response {
+  msg?: string;
+  status?: number;
+  data?: {
+    department?: string;
+    id?: number;
+    phone?: string;
+    username?: string;
+    userPermission?: string;
+  };
+}
+
+/**
+ * ResetPasswordResponse
+ *
+ * BaseResponse
+ */
+export interface ResetPasswordResponse {
+  msg?: string;
+  status?: number;
+  data?: {
+    id?: number;
+    newPassword?: string;
+    username?: string;
+  };
 }

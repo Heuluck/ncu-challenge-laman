@@ -1,78 +1,75 @@
 import { PlusOutlined } from "@ant-design/icons";
-import type { ProColumns } from "@ant-design/pro-components";
+import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
   ProTable,
   DrawerForm,
   ProFormText,
   ProFormSelect,
 } from "@ant-design/pro-components";
-import { Button, Form, message } from "antd";
-
-export type UserListItem = {
-  username: string; // 用户名
-  /**
-   * 超级管理员：可授予权限、上传/下载文件、增删用户
-   * 管理员：可上传/下载文件
-   * 访客：仅查看文件，下载需要超级管理员授权
-   */
-  userPermission: "超级管理员" | "管理员" | "访客"; // 权限
-  department?: string; // 部门
-  phone?: string; // 电话
-};
-
-const tableListDataSource: UserListItem[] = [
-  {
-    username: "张三",
-    userPermission: "超级管理员",
-    department: "IT",
-    phone: "123-456-7890",
-  },
-  {
-    username: "李四",
-    userPermission: "管理员",
-    department: "研究员",
-    phone: "098-765-4321",
-  },
-  {
-    username: "王五",
-    userPermission: "访客",
-    phone: "555-555-5555",
-  },
-];
-
-const columns: ProColumns<UserListItem>[] = [
-  {
-    title: "用户名",
-    dataIndex: "username",
-    key: "username",
-    fixed: "left",
-    width: 70,
-  },
-  { title: "权限", dataIndex: "userPermission", key: "userPermission" },
-  { title: "部门", dataIndex: "department", key: "department" },
-  { title: "电话", dataIndex: "phone", key: "phone" },
-  {
-    title: "操作",
-    valueType: "option",
-    render: () => {
-      return (
-        <>
-          <Button>编辑</Button>
-        </>
-      );
-    },
-    fixed: "right",
-    width: 200,
-  },
-];
+import { Button, Form, message, Modal } from "antd";
+import { useRef } from "react";
+import { GetUserList, DeleteUser } from "../api/user/user";
+import useUserPermission from "../hook/useUserPermission";
+import type { userData } from "../api/user/user-res";
+// columns will be declared inside the component to access refs and permissions
 
 function UserPage() {
+  const actionRef = useRef<ActionType>(null);
+  const permission = useUserPermission();
+  const { confirm } = Modal;
+
+  const columns: ProColumns<userData>[] = [
+    {
+      title: "用户名",
+      dataIndex: "username",
+      key: "username",
+      fixed: "left",
+      width: 120,
+    },
+    { title: "权限", dataIndex: "userPermission", key: "userPermission" },
+    { title: "部门", dataIndex: "department", key: "department" },
+    { title: "电话", dataIndex: "phone", key: "phone" },
+    {
+      title: "操作",
+      valueType: "option",
+      width: 200,
+      render: (_text, entity) => {
+        if (!permission.hasCommonPermission) return <p>无权限操作</p>;
+        return [
+          <Button key="edit">编辑</Button>,
+          permission.hasSuperPermission && (
+            <Button
+              key="delete"
+              danger
+              onClick={() => {
+                confirm({
+                  title: "确认删除",
+                  onOk: async () => {
+                    try {
+                      await DeleteUser({ id: entity.id as number });
+                      message.success("删除成功");
+                      actionRef.current?.reload();
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  },
+                });
+              }}
+            >
+              删除
+            </Button>
+          ),
+        ];
+      },
+    },
+  ];
+
   const renderCreateAction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [form] = Form.useForm<{ username: string }>();
 
     return (
-      <DrawerForm<Omit<UserListItem, "id">>
+      <DrawerForm<Omit<userData, "id">>
         title="创建用户"
         form={form}
         trigger={
@@ -106,13 +103,17 @@ function UserPage() {
       </DrawerForm>
     );
   };
+
   return (
-    <ProTable<UserListItem>
+    <ProTable<userData>
       columns={columns}
-      request={(params, sorter, filter) => {
-        console.log(params, sorter, filter);
+      actionRef={actionRef}
+      request={async (params, _sorter, _filter) => {
+        const { current: page = 1, pageSize: limit = 10, ...rest } = params;
+        const resp = await GetUserList({ page, limit, ...rest });
         return Promise.resolve({
-          data: tableListDataSource,
+          data: resp.data?.items || [],
+          total: resp.data?.pagination?.total || 0,
           success: true,
         });
       }}
@@ -121,7 +122,7 @@ function UserPage() {
         labelWidth: "auto",
       }}
       scroll={{ x: 800 }}
-      rowKey="key"
+      rowKey="id"
       pagination={{
         showQuickJumper: true,
       }}

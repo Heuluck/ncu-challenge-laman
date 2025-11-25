@@ -57,3 +57,33 @@ export const DeleteUser = (
 ): Promise<res.AuthProfileResponse> => {
   return instance.post(apiPaths.user.delete, data);
 };
+
+/**
+ * 创建用户
+ * 仅超级管理员权限
+ */
+export const CreateUser = (
+  data: req.CreateUserRequest,
+): Promise<res.AuthProfileResponse> => {
+  return instance.post(apiPaths.user.create, data);
+};
+
+/**
+ * 重置用户密码
+ * 仅超级管理员权限
+ */
+export const ResetPassword = (
+  data: req.ResetPasswordRequest,
+): Promise<res.AuthProfileResponse> => {
+  return instance.post(apiPaths.user.resetPassword, data);
+};
+
+/**
+ * 管理员更新用户资料
+ * 仅超级管理员权限
+ */
+export const UpdateUser = (
+  data: req.AdminUpdateUserRequest,
+): Promise<res.AuthProfileResponse> => {
+  return instance.post(apiPaths.user.updateUser, data);
+};

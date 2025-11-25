@@ -74,3 +74,38 @@ export interface DeleteUserRequest {
    */
   id: number;
 }
+
+/**
+ * CreateUserRequest
+ */
+export interface CreateUserRequest {
+    department?: string;
+    /**
+     * 可选，不提供则自动生成
+     */
+    password?: string;
+    phone?: string;
+    username: string;
+    /**
+     * 访客/用户/管理员/超级管理员
+     */
+    userPermission?: UserPermission;
+}
+
+/**
+ * AdminUpdateUserRequest
+ */
+export interface AdminUpdateUserRequest {
+    department?: string;
+    id: number;
+    phone?: string;
+    username?: string;
+    userPermission?: string;
+}
+
+/**
+ * ResetPasswordRequest
+ */
+export interface ResetPasswordRequest {
+    id: number;
+}

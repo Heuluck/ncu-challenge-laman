@@ -7,6 +7,9 @@ const apiPaths = {
     updateProfile: "/auth/profile",
     updatePermission: "/auth/update-permission",
     delete: "/auth/delete",
+    create: "/auth/create-user",
+    resetPassword: "/auth/reset-password",
+    updateUser: "/auth/admin-update-user",
   },
   patient: {
     create: "/patient/create",
