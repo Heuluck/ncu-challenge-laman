@@ -1,12 +1,14 @@
 import { Line, type LineConfig } from "@ant-design/charts";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import { Spin, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { csvToData } from "../../utils/csv";
+import { getFile } from "../../api/file/file";
 
 const { Dragger } = Upload;
 
-const DemoLine = () => {
+const RamanDetailPage = () => {
   const [ramanData, setRamanData] =
     useState<
       { wavelength: number; intensity: number; category: string | undefined }[]
@@ -45,9 +47,52 @@ const DemoLine = () => {
       lineWidth: 2,
     },
   };
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const location = useLocation();
+
+  useEffect(() => {
+    // 从 URL 的 searchParams 中读取 csv id（支持 csvId / id / fileId / file）
+    try {
+      const params = new URLSearchParams(location.search);
+      const csvId =
+        params.get("csvId") || params.get("id") || params.get("fileId") || params.get("file");
+
+      if (!csvId) return;
+
+      const idNum = Number(csvId);
+      if (Number.isNaN(idNum)) {
+        setError("csv id 不是有效的数字");
+        return;
+      }
+
+      setLoading(true);
+      // 调用后端 API 获取 csv 文本（getFile 返回的就是文本）
+      getFile({ id: idNum })
+        .then((text) => {
+          // 解析 csv 文本并写入图表数据
+          const parsed = csvToData(text, `csv-${idNum}`);
+          setRamanData(parsed.sort((a, b) => a.wavelength - b.wavelength));
+        })
+        .catch((e) => {
+          setError(String(e?.message || e));
+        })
+        .finally(() => setLoading(false));
+    } catch (err) {
+      setError(String(err));
+    }
+  }, [location.search]);
   return (
     <div className="flex flex-col items-center overflow-hidden">
-      {ramanData ? (
+      {loading ? (
+        <div className="flex h-[530px] w-full flex-col items-center justify-center">
+          <Spin size="large" />
+        </div>
+      ) : error ? (
+        <div className="flex h-[530px] w-full flex-col items-center justify-center text-red-500">
+          {error}
+        </div>
+      ) : ramanData ? (
         ramanData.length > 0 ? (
           <div className="h-[530px] w-full max-w-[900px] overflow-scroll pb-4">
             <div className="w-[900px]">
@@ -102,4 +147,4 @@ const DemoLine = () => {
   );
 };
 
-export default DemoLine;
+export default RamanDetailPage;

@@ -5,8 +5,8 @@ import RequireAuth from "./layout/RequireAuth";
 import Index from "./pages/index";
 import UsersPage from "./pages/users";
 import Raman from "./pages/raman";
-import RamanTest from "./pages/raman/test";
 import "./App.css";
+import RamanDetailPage from "./pages/raman/view";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
           <Route index element={<Index />} />
           <Route path="/user" element={<UsersPage />} />
           <Route path="/raman" element={<Raman />} />
-          <Route path="/raman/test" element={<RamanTest />} />
+          <Route path="/raman/view" element={<RamanDetailPage />} />
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>

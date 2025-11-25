@@ -13,6 +13,7 @@ import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
 import type { FileInfo } from "../../api/file/file-res";
 import { useRef } from "react";
+import { Link } from "react-router";
 
 const { confirm } = Modal;
 
@@ -93,10 +94,8 @@ function RamanListPage() {
       render: (_, entity) => {
         return (
           <Flex gap={8}>
-            <Button type="primary" size="small" onClick={async ()=>{
-              const data = await fileApi.getFile({id: entity.id})
-            }}>
-              查看
+            <Button type="primary" size="small">
+              <Link to={`view?id=${entity.id}`}>查看</Link>
             </Button>
             <Button
               size="small"
