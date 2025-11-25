@@ -11,12 +11,9 @@ import {
   PageContainer,
   ProCard,
   ProConfigProvider,
-  ProLayout,
-  SettingDrawer,
-  type ProSettings,
+  ProLayout
 } from "@ant-design/pro-components";
 import { Avatar, ConfigProvider, Dropdown, Tooltip } from "antd";
-import { useState } from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import useUserStore from "../store/user";
 
@@ -49,7 +46,6 @@ const routeList = {
 };
 
 function BaseLayout() {
-  const [settings, setSetting] = useState<Partial<ProSettings> | undefined>();
   const location = useLocation();
   const navigate = useNavigate();
   const userStore = useUserStore();
@@ -64,7 +60,6 @@ function BaseLayout() {
           }}
         >
           <ProLayout
-            {...settings}
             title="拉曼光谱数据库"
             layout="mix"
             splitMenus
@@ -158,19 +153,6 @@ function BaseLayout() {
               </ProCard>
             </PageContainer>
           </ProLayout>
-          <SettingDrawer
-            pathname={location.pathname}
-            enableDarkTheme
-            getContainer={(e: unknown) => {
-              if (typeof window === "undefined") return e;
-              return document.getElementById("pro-layout-container");
-            }}
-            settings={settings}
-            onSettingChange={(changeSetting) => {
-              setSetting(changeSetting);
-            }}
-            disableUrlParams={false}
-          />
         </ConfigProvider>
       </ProConfigProvider>
     </div>

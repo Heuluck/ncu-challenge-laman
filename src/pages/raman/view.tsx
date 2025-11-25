@@ -113,7 +113,7 @@ const RamanDetailPage = () => {
           </div>
         )
       ) : null}
-      <PatientInfo patient={fileWithPatient?.patient}  />
+      {csvId && <PatientInfo patient={fileWithPatient?.patient}  />}
       {!csvId && (
         <Dragger
           name="file"

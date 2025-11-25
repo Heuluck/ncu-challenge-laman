@@ -7,7 +7,7 @@ const PatientInfo: React.FC<{ patient: PatientListItem | undefined }> = (props) 
 };
 
 function patientListItemToInfo(item: PatientListItem | undefined) {
-  const time = item?.time ? dayjs(item.time).format("YYYY-MM-DD HH:mm:ss") : "-";
+  const time = item?.time ? dayjs(item.time * 1000).format("YYYY-MM-DD") : "-";
   const stage =
     [item?.tStage, item?.nStage, item?.mStage].filter(Boolean).join(" | ") || "-";
   const isTested =
@@ -38,7 +38,7 @@ function patientListItemToInfo(item: PatientListItem | undefined) {
       label: "采样前是否接受治疗",
       children: isPreTreatment,
     },
-    { key: "15", label: "治疗方式", children: item?.treatmentType ?? "-" },
+    { key: "15", label: "接受何种治疗", children: item?.treatmentType ?? "-" },
     { key: "16", label: "备注", children: item?.memo ?? "-" },
   ];
 }

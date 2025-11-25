@@ -98,7 +98,7 @@ function RamanListPage() {
         if (!permission.hasCommonPermission) return <p>无权限操作</p>;
         return [
           <Button type="primary" size="small">
-            <Link to={`view?id=${entity.id}`}>查看</Link>
+            <Link to={`view?id=${entity.id}`} target="_blank">查看</Link>
           </Button>,
           <Button
             size="small"
