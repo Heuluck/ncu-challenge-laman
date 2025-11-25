@@ -87,3 +87,15 @@ export const UpdateUser = (
 ): Promise<res.AuthProfileResponse> => {
   return instance.post(apiPaths.user.updateUser, data);
 };
+
+export default {
+  Login,
+  Me,
+  GetUserList,
+  UpdateProfile,
+  UpdatePermission,
+  DeleteUser,
+  CreateUser,
+  ResetPassword,
+  UpdateUser,
+} as const;
