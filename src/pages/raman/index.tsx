@@ -23,12 +23,30 @@ export type TableListItem = {
   description?: string; // 文件描述
 };
 
+const requestPatients = async () => {
+  try {
+    const resp = await GetPatientList({ page: 1, limit: 200 });
+    const items = resp.data?.items || [];
+    return items.map((p) => ({
+      label: `${p.name} (${p.serialNo})`,
+      value: p.id,
+    }));
+  } catch (_) {
+    return [];
+  }
+};
+
 const columns: ProColumns<FileInfo>[] = [
   {
     title: "病人",
     dataIndex: "patientName",
-    key: "patientName",
+    key: "patientId",
     fixed: "left",
+    valueType: "select",
+    renderFormItem(_, config, form) {
+      return <ProFormSelect showSearch {...config} {...form} />;
+    },
+    request: requestPatients,
   },
   {
     title: "文件原名",
@@ -72,7 +90,9 @@ const columns: ProColumns<FileInfo>[] = [
     render: () => {
       return (
         <Flex gap={8}>
-          <Button type="primary" size="small">查看</Button>
+          <Button type="primary" size="small">
+            查看
+          </Button>
           <Button size="small">下载</Button>
           <Button
             onClick={() => {
@@ -94,8 +114,8 @@ const columns: ProColumns<FileInfo>[] = [
 ];
 
 function RamanListPage() {
-    const actionRef = useRef<ActionType>(null);
-  
+  const actionRef = useRef<ActionType>(null);
+
   const renderUploadAction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [form] = Form.useForm();
@@ -131,7 +151,7 @@ function RamanListPage() {
             return false;
           }
         }}
-        >
+      >
         <ProFormUploadDragger
           max={20}
           description="支持批量上传最多 20 个 CSV 文件"
@@ -154,15 +174,7 @@ function RamanListPage() {
           width="md"
           showSearch
           rules={[{ required: true }]}
-          request={async () => {
-            try {
-              const resp = await GetPatientList({ page: 1, limit: 200 });
-              const items = resp.data?.items || [];
-              return items.map((p) => ({ label: `${p.name} (${p.serialNo})`, value: p.id }));
-            } catch (_) {
-              return [];
-            }
-          }}
+          request={requestPatients}
         />
       </DrawerForm>
     );
