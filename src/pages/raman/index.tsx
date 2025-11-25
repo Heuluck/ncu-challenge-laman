@@ -7,13 +7,14 @@ import {
   ProFormText,
   ProFormSelect,
 } from "@ant-design/pro-components";
-import { Button, Flex, Modal, Form, message, Tooltip } from "antd";
+import { Button, Modal, Form, message, Tooltip } from "antd";
 import fileApi from "../../api/file/file";
 import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
 import type { FileInfo } from "../../api/file/file-res";
 import { useRef } from "react";
 import { Link } from "react-router";
+import useUserPermission from "../../hook/useUserPermission";
 
 const { confirm } = Modal;
 
@@ -39,6 +40,8 @@ const requestPatients = async () => {
 
 function RamanListPage() {
   const actionRef = useRef<ActionType>(null);
+  const permission = useUserPermission();
+
   const columns: ProColumns<FileInfo>[] = [
     {
       title: "病人",
@@ -92,44 +95,41 @@ function RamanListPage() {
       valueType: "option",
       width: 200,
       render: (_, entity) => {
-        return (
-          <Flex gap={8}>
-            <Button type="primary" size="small">
-              <Link to={`view?id=${entity.id}`}>查看</Link>
-            </Button>
-            <Button
-              size="small"
-              onClick={() =>
-                fileApi.downloadFile(
-                  { id: entity.id },
-                  `${entity.patientId}-${entity.patientName}-${entity.originalName}`,
-                )
-              }
-            >
-              下载
-            </Button>
-            <Button
-              onClick={() => {
-                confirm({
-                  title: "确认删除",
-                  onOk: async () => {
-                    try {
-                      await fileApi.DeleteFile({ id: entity.id });
-                      message.success("删除成功");
-                      actionRef.current?.reload();
-                    } catch (_) {
-                      message.error("删除失败，请重试");
-                    }
-                  },
-                });
-              }}
-              danger
-              size="small"
-            >
-              删除
-            </Button>
-          </Flex>
-        );
+        if (!permission.hasCommonPermission) return <p>无权限操作</p>;
+        return [
+          <Button type="primary" size="small">
+            <Link to={`view?id=${entity.id}`}>查看</Link>
+          </Button>,
+          <Button
+            size="small"
+            onClick={() =>
+              fileApi.downloadFile(
+                { id: entity.id },
+                `${entity.patientId}-${entity.patientName}-${entity.originalName}`,
+              )
+            }
+          >
+            下载
+          </Button>,
+          permission.hasSuperPermission && <Button
+            onClick={() => {
+              confirm({
+                title: "确认删除",
+                onOk: async () => {
+                  try {
+                    await fileApi.DeleteFile({ id: entity.id });
+                    message.success("删除成功");
+                    actionRef.current?.reload();
+                  } catch (_) { /* empty */ }
+                },
+              });
+            }}
+            danger
+            size="small"
+          >
+            删除
+          </Button>,
+        ];
       },
     },
   ];
@@ -164,7 +164,6 @@ function RamanListPage() {
             return true;
           } catch (err) {
             console.error(err);
-            message.error("上传失败，请重试");
             return false;
           }
         }}
@@ -230,7 +229,7 @@ function RamanListPage() {
       }}
       dateFormatter="string"
       headerTitle="表格标题"
-      toolBarRender={() => [renderUploadAction()]}
+      toolBarRender={() => [permission.hasAdminPermission && renderUploadAction()]}
     />
   );
 }

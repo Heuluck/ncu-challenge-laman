@@ -17,8 +17,8 @@ const RamanDetailPage = () => {
   const config: LineConfig = {
     data: ramanData,
     title: {
-      title: "拉曼光谱示例图",
-      subtitle: "拉曼光谱示例图",
+      title: "拉曼光谱图",
+      subtitle: "拉曼光谱图",
     },
     xField: "wavelength",
     yField: "intensity",
@@ -52,11 +52,9 @@ const RamanDetailPage = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // 从 URL 的 searchParams 中读取 csv id（支持 csvId / id / fileId / file）
     try {
       const params = new URLSearchParams(location.search);
-      const csvId =
-        params.get("csvId") || params.get("id") || params.get("fileId") || params.get("file");
+      const csvId = params.get("id")
 
       if (!csvId) return;
 
@@ -67,10 +65,8 @@ const RamanDetailPage = () => {
       }
 
       setLoading(true);
-      // 调用后端 API 获取 csv 文本（getFile 返回的就是文本）
       getFile({ id: idNum })
         .then((text) => {
-          // 解析 csv 文本并写入图表数据
           const parsed = csvToData(text, `csv-${idNum}`);
           setRamanData(parsed.sort((a, b) => a.wavelength - b.wavelength));
         })
@@ -140,8 +136,8 @@ const RamanDetailPage = () => {
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
-        <p className="ant-upload-text">上传拉曼光谱数据</p>
-        <p className="ant-upload-hint">本地测试 csv 处理用的</p>
+        <p className="ant-upload-text">本地拉曼光谱数据可视化</p>
+        <p className="ant-upload-hint">可添加多个文件，文件不会上传</p>
       </Dragger>
     </div>
   );

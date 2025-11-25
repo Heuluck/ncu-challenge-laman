@@ -87,7 +87,6 @@ function CreatePatientDrawer({
             formRef.current?.resetFields();
             return true;
           } catch (_e) {
-            message.error("修改失败，请重试");
             return false;
           }
         }
@@ -99,7 +98,6 @@ function CreatePatientDrawer({
           formRef.current?.resetFields();
           return true;
         } catch (_e) {
-          message.error("提交失败，请重试");
           return false;
         }
       }}
