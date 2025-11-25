@@ -1,10 +1,11 @@
 import { Line, type LineConfig } from "@ant-design/charts";
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router";
+import { useSearchParams } from "react-router";
 import { Spin, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { csvToData } from "../../utils/csv";
 import { getFile } from "../../api/file/file";
+import axios from "axios";
 
 const { Dragger } = Upload;
 
@@ -49,35 +50,36 @@ const RamanDetailPage = () => {
   };
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    try {
-      const params = new URLSearchParams(location.search);
-      const csvId = params.get("id")
-
+    const controller = new AbortController();
+    async function fetchData() {
+      const csvId = searchParams.get("id");
       if (!csvId) return;
-
       const idNum = Number(csvId);
       if (Number.isNaN(idNum)) {
         setError("csv id 不是有效的数字");
         return;
       }
-
       setLoading(true);
-      getFile({ id: idNum })
-        .then((text) => {
-          const parsed = csvToData(text, `csv-${idNum}`);
-          setRamanData(parsed.sort((a, b) => a.wavelength - b.wavelength));
-        })
-        .catch((e) => {
-          setError(String(e?.message || e));
-        })
-        .finally(() => setLoading(false));
-    } catch (err) {
-      setError(String(err));
+      try {
+        const text = await getFile({ id: idNum }, controller.signal);
+        const parsed = csvToData(text, `csv-${idNum}`);
+        setRamanData(parsed.sort((a, b) => a.wavelength - b.wavelength));
+      } catch (e) {
+        if (controller.signal.aborted) return;
+        if (axios.isAxiosError(e)) setError(String(e?.message || e));
+        else setError(String(e));
+      } finally {
+        setLoading(false);
+      }
     }
-  }, [location.search]);
+    fetchData();
+    return () => {
+      controller.abort();
+    }
+  }, [searchParams]);
   return (
     <div className="flex flex-col items-center overflow-hidden">
       {loading ? (

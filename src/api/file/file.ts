@@ -82,8 +82,8 @@ export const UploadFile = (
  * 下载文件
  * 访客以外均可
  */
-export const getFile = (data: req.DownloadRequest): Promise<string> => {
-  return instance.post(apiPaths.file.download, data);
+export const getFile = (data: req.DownloadRequest, abortSignal?: AbortSignal): Promise<string> => {
+  return instance.post(apiPaths.file.download, data, { signal: abortSignal });
 };
 
 /**
