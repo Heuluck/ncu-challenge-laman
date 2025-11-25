@@ -64,7 +64,7 @@ export const DeleteUser = (
  */
 export const CreateUser = (
   data: req.CreateUserRequest,
-): Promise<res.AuthProfileResponse> => {
+): Promise<res.CreateUserResponse> => {
   return instance.post(apiPaths.user.create, data);
 };
 
@@ -74,7 +74,7 @@ export const CreateUser = (
  */
 export const ResetPassword = (
   data: req.ResetPasswordRequest,
-): Promise<res.AuthProfileResponse> => {
+): Promise<res.ResetPasswordResponse> => {
   return instance.post(apiPaths.user.resetPassword, data);
 };
 
@@ -84,7 +84,7 @@ export const ResetPassword = (
  */
 export const UpdateUser = (
   data: req.AdminUpdateUserRequest,
-): Promise<res.AuthProfileResponse> => {
+): Promise<res.AdminUpdateUserResponse> => {
   return instance.post(apiPaths.user.updateUser, data);
 };
 

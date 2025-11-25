@@ -7,7 +7,7 @@ const useUserPermission = () => {
   const hasAdminPermission =
     userStore.userData.userPermission === "管理员" || hasSuperPermission;
   const hasCommonPermission =
-    userStore.userData.userPermission === "普通用户" || hasAdminPermission;
+    userStore.userData.userPermission === "用户" || hasAdminPermission;
 
   return {
     hasSuperPermission,

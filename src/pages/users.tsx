@@ -18,6 +18,13 @@ function UserPage() {
   const actionRef = useRef<ActionType>(null);
   const permission = useUserPermission();
   const { confirm } = Modal;
+  const showPasswordModal = (password: string, title = "密码") => {
+    Modal.info({
+      title,
+      content: <div>{password}</div>,
+      okText: "关闭",
+    });
+  };
 
   const columns: ProColumns<userData>[] = [
     {
@@ -35,29 +42,63 @@ function UserPage() {
       valueType: "option",
       width: 200,
       render: (_text, entity) => {
-        if (!permission.hasCommonPermission) return <p>无权限操作</p>;
+        if (!permission.hasSuperPermission) return <p>无权限操作</p>;
         return [
-          <Button
-            key="edit"
-            onClick={() => {
-              // open drawer in edit mode and set form values
-              setEditData({ id: entity.id as number, isEdit: true });
-              setFormOpen(true);
-              setTimeout(() => {
-                form.setFieldsValue({
-                  username: entity.username,
-                  userPermission: entity.userPermission,
-                  department: entity.department,
-                  phone: entity.phone,
+          permission.hasSuperPermission && (
+            <Button
+              size="small"
+              key="edit"
+              type="primary"
+              onClick={() => {
+                setEditData({ id: entity.id as number, isEdit: true });
+                setFormOpen(true);
+                setTimeout(() => {
+                  form.setFieldsValue({
+                    username: entity.username,
+                    userPermission: entity.userPermission,
+                    department: entity.department,
+                    phone: entity.phone,
+                  });
+                }, 0);
+              }}
+            >
+              编辑
+            </Button>
+          ),
+          permission.hasSuperPermission && (
+            <Button
+              size="small"
+              key="reset"
+              onClick={() => {
+                confirm({
+                  title: "确认重置密码",
+                  onOk: async () => {
+                    try {
+                      const resp = await userApi.ResetPassword({
+                        id: entity.id as number,
+                      });
+                      if (!resp.data?.newPassword) {
+                        message.error("重置密码失败，未返回新密码");
+                        return;
+                      }
+                      const pwd = resp.data?.newPassword;
+                      showPasswordModal(pwd, "新密码");
+                      message.success("重置成功");
+                      actionRef.current?.reload();
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  },
                 });
-              }, 0);
-            }}
-          >
-            编辑
-          </Button>,
+              }}
+            >
+              重设密码
+            </Button>
+          ),
           permission.hasSuperPermission && (
             <Button
               key="delete"
+              size="small"
               danger
               onClick={() => {
                 confirm({
@@ -82,7 +123,6 @@ function UserPage() {
     },
   ];
 
-  // form and drawer state for create / edit
   const [form] = Form.useForm<Partial<userData>>();
   const [formOpen, setFormOpen] = useState(false);
   const [editData, setEditData] = useState({ id: -1, isEdit: false });
@@ -103,7 +143,6 @@ function UserPage() {
     );
   };
 
-  // DrawerForm for create / edit
   const CreateEditDrawer = (
     <DrawerForm<Partial<userData>>
       title={editData.isEdit ? "编辑用户" : "创建用户"}
@@ -116,9 +155,13 @@ function UserPage() {
       onFinish={async (values: Partial<userData>) => {
         try {
           if (editData.isEdit && editData.id > 0) {
-            const payload: Partial<req.AdminUpdateUserRequest> = { id: editData.id };
+            const payload: Partial<req.AdminUpdateUserRequest> = {
+              id: editData.id,
+            };
             if (values.username) payload.username = values.username;
-            if (values.userPermission) payload.userPermission = values.userPermission as req.UserPermission;
+            if (values.userPermission)
+              payload.userPermission =
+                values.userPermission as req.UserPermission;
             if (values.department) payload.department = values.department;
             if (values.phone) payload.phone = values.phone;
             await userApi.UpdateUser(payload as req.AdminUpdateUserRequest);
@@ -126,10 +169,14 @@ function UserPage() {
           } else {
             const payload: Partial<req.CreateUserRequest> = {};
             if (values.username) payload.username = values.username;
-            if (values.userPermission) payload.userPermission = values.userPermission as req.UserPermission;
+            if (values.userPermission)
+              payload.userPermission =
+                values.userPermission as req.UserPermission;
             if (values.department) payload.department = values.department;
             if (values.phone) payload.phone = values.phone;
-            await userApi.CreateUser(payload as req.CreateUserRequest);
+            const resp = await userApi.CreateUser(payload as req.CreateUserRequest);
+            const pwd = resp.data?.password || "无法获取密码";
+            showPasswordModal(pwd, "初始密码");
             message.success("创建成功");
           }
           setFormOpen(false);
@@ -142,7 +189,11 @@ function UserPage() {
         }
       }}
     >
-      <ProFormText name="username" label="用户名" rules={[{ required: true }]} />
+      <ProFormText
+        name="username"
+        label="用户名"
+        rules={[{ required: true }]}
+      />
       <ProFormSelect
         name="userPermission"
         label="权限"

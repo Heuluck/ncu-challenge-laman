@@ -39,7 +39,7 @@ export interface userData {
    * 管理员：可上传/下载文件
    * 访客：仅查看文件，下载需要超级管理员授权
    */
-  userPermission: "超级管理员" | "管理员" | "访客"; // 权限
+  userPermission: "超级管理员" | "管理员" | "用户" | "访客"; // 权限
   department?: string; // 部门
   phone?: string; // 电话
 }
@@ -115,7 +115,7 @@ export interface CreateUserResponse {
  *
  * BaseResponse
  */
-export interface Response {
+export interface AdminUpdateUserResponse {
   msg?: string;
   status?: number;
   data?: {
