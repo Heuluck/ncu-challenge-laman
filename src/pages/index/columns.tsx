@@ -1,17 +1,21 @@
 import React from "react";
-import type { ProColumns, ProFormInstance } from "@ant-design/pro-components";
+import type { ActionType, ProColumns, ProFormInstance } from "@ant-design/pro-components";
 import {
   ProFormSelect,
   ProFormDateRangePicker,
   ProFormSlider,
 } from "@ant-design/pro-components";
-import { Button } from "antd";
+import { Button, message, Modal } from "antd";
 import dayjs from "dayjs";
 import type { PatientListItem } from "../../api/patient/patient-res";
 import type { userData } from "../../api/user/user-res";
+import patientApi from "../../api/patient/patient";
+
+const { confirm } = Modal;
 
 export type ColumnsDeps = {
   userData: userData;
+  actionRef: React.RefObject<ActionType | null>;
   formRef: React.RefObject<ProFormInstance<unknown> | null>;
   setEditData: (v: { id: number; isEdit: boolean }) => void;
   setFormOpen: (open: boolean) => void;
@@ -19,7 +23,7 @@ export type ColumnsDeps = {
 };
 
 export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
-  const { userData, formRef, setEditData, setFormOpen, requestGroups } = deps;
+  const { userData, formRef, actionRef, setEditData, setFormOpen, requestGroups } = deps;
   const isSuperAdmin = userData.userPermission === "超级管理员";
   const isAdmin = userData.userPermission === "管理员" || isSuperAdmin;
 
@@ -178,7 +182,25 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
               </Button>
             ),
             isSuperAdmin && (
-              <Button key="delete" size="small" danger>
+              <Button
+                key="delete"
+                size="small"
+                danger
+                onClick={() => {
+                  confirm({
+                    title: "确认删除",
+                    onOk: async () => {
+                      try {
+                        await patientApi.DeletePatient({ id: record.id });
+                        message.success("删除成功");
+                        actionRef.current?.reload();
+                      } catch (_) {
+                        /* empty */
+                      }
+                    },
+                  });
+                }}
+              >
                 删除
               </Button>
             ),

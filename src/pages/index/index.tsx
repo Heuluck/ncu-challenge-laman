@@ -44,6 +44,7 @@ function IndexPage() {
   const columns = getColumns({
     userData: userStore.userData,
     formRef,
+    actionRef,
     setEditData,
     setFormOpen,
     requestGroups,
