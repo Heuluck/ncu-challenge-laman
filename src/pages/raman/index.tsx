@@ -93,7 +93,9 @@ function RamanListPage() {
       render: (_, entity) => {
         return (
           <Flex gap={8}>
-            <Button type="primary" size="small">
+            <Button type="primary" size="small" onClick={async ()=>{
+              const data = await fileApi.getFile({id: entity.id})
+            }}>
               查看
             </Button>
             <Button

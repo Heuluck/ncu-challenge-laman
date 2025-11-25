@@ -95,16 +95,13 @@ export const downloadFile = async (
   fileName: string = "download.csv",
 ): Promise<void> => {
   const cfg = {
-    responseType: "text",
     rawResponse: true,
   } as AxiosRequestConfig & { rawResponse?: boolean };
 
   const resp = await instance.post(apiPaths.file.download, data, cfg);
 
-  // 返回的是 CSV 文本
   const text = resp.data;
 
-  // content-type 优先使用响应头，否则使用 csv 类型
   const contentType = resp.headers["content-type"] || "text/csv; charset=utf-8";
   const blob = new Blob([text], { type: contentType });
 

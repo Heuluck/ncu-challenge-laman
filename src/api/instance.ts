@@ -28,41 +28,12 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    console.log(response.headers);
     if (
       (typeof response.headers["content-type"] === "string" &&
         response.headers["content-type"].includes("application/json") &&
         response.data.status !== 0) ||
       response.status !== 200
     ) {
-      if (response.data && typeof response.data === "string")
-        // 如果是字符串(不过服务器返回header是application/json)则尝试解析
-        try {
-          const data = JSON.parse(response.data);
-          message.error(data?.msg || "请求出错");
-          console.error("请求响应出错：", response.status, response.data);
-          return Promise.reject(
-            new AxiosError(
-              data?.msg || "请求失败",
-              String(response.status),
-              response.config,
-              response.request,
-              response,
-            ),
-          );
-        } catch {
-          message.error("请求出错");
-          console.error("请求响应出错：", response.status, response.data);
-          return Promise.reject(
-            new AxiosError(
-              "请求失败",
-              String(response.status),
-              response.config,
-              response.request,
-              response,
-            ),
-          );
-        }
       message.error(response.data?.msg || "请求出错");
       console.error("请求响应出错：", response.status, response.data);
       return Promise.reject(
