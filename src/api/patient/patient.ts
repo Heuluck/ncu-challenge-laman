@@ -57,3 +57,12 @@ export const DeletePatient = (
 export const GetPatientGroups = (): Promise<res.PatientGroupsResponse> => {
   return instance.post(apiPaths.patient.groups);
 };
+
+export default {
+  CreatePatient,
+  GetPatientList,
+  GetPatientDetail,
+  UpdatePatient,
+  DeletePatient,
+  GetPatientGroups,
+} as const;

@@ -1,4 +1,5 @@
 import { instance } from "../instance";
+import type { AxiosRequestConfig } from "axios";
 import apiPaths from "../path";
 import type * as req from "./file-req";
 import type * as res from "./file-res";
@@ -81,8 +82,40 @@ export const UploadFile = (
  * 下载文件
  * 访客以外均可
  */
-export const DownloadFile = (data: req.DownloadRequest): Promise<string> => {
+export const getFile = (data: req.DownloadRequest): Promise<string> => {
   return instance.post(apiPaths.file.download, data);
+};
+
+/**
+ * 在浏览器中下载文件
+ * 访客以外均可
+ */
+export const downloadFile = async (
+  data: req.DownloadRequest,
+  fileName: string = "download.csv",
+): Promise<void> => {
+  const cfg = {
+    responseType: "text",
+    rawResponse: true,
+  } as AxiosRequestConfig & { rawResponse?: boolean };
+
+  const resp = await instance.post(apiPaths.file.download, data, cfg);
+
+  // 返回的是 CSV 文本
+  const text = resp.data;
+
+  // content-type 优先使用响应头，否则使用 csv 类型
+  const contentType = resp.headers["content-type"] || "text/csv; charset=utf-8";
+  const blob = new Blob([text], { type: contentType });
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
 };
 
 /**
@@ -123,7 +156,8 @@ export const AuthorizeDownload = (
 
 export default {
   UploadFile,
-  DownloadFile,
+  getFile,
+  downloadFile,
   GetFileList,
   GetFileTypes,
   DeleteFile,

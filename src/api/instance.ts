@@ -1,5 +1,5 @@
 import { message } from "antd";
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 
 export const instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -12,7 +12,6 @@ export const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
-    // 在发送请求之前做些什么，比如添加认证 token
     const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -29,13 +28,46 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
-    if (response.data.status !== 0 || response.status !== 200) {
-      message.error(response?.data?.msg || "请求出错");
-      // 服务器响应了状态码，但不是2xx
+    console.log(response.headers);
+    if (
+      (typeof response.headers["content-type"] === "string" &&
+        response.headers["content-type"].includes("application/json") &&
+        response.data.status !== 0) ||
+      response.status !== 200
+    ) {
+      if (response.data && typeof response.data === "string")
+        // 如果是字符串(不过服务器返回header是application/json)则尝试解析
+        try {
+          const data = JSON.parse(response.data);
+          message.error(data?.msg || "请求出错");
+          console.error("请求响应出错：", response.status, response.data);
+          return Promise.reject(
+            new AxiosError(
+              data?.msg || "请求失败",
+              String(response.status),
+              response.config,
+              response.request,
+              response,
+            ),
+          );
+        } catch {
+          message.error("请求出错");
+          console.error("请求响应出错：", response.status, response.data);
+          return Promise.reject(
+            new AxiosError(
+              "请求失败",
+              String(response.status),
+              response.config,
+              response.request,
+              response,
+            ),
+          );
+        }
+      message.error(response.data?.msg || "请求出错");
       console.error("请求响应出错：", response.status, response.data);
       return Promise.reject(
         new AxiosError(
-          response.data.msg || "请求失败",
+          response.data?.msg || "请求失败",
           String(response.status),
           response.config,
           response.request,
@@ -43,11 +75,19 @@ instance.interceptors.response.use(
         ),
       );
     }
-    // 对响应数据做点什么
+    // 如果要求 rawResponse，直接返回完整响应
+    if (
+      (
+        response.config as InternalAxiosRequestConfig & {
+          rawResponse?: boolean;
+        }
+      )?.rawResponse
+    ) {
+      return response;
+    }
     return response.data;
   },
   (error) => {
-    // 对响应错误做点什么
     if (axios.isAxiosError(error)) {
       if (error.response) {
         message.error(error.response?.data?.msg || error.message);

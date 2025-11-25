@@ -36,86 +36,102 @@ const requestPatients = async () => {
   }
 };
 
-const columns: ProColumns<FileInfo>[] = [
-  {
-    title: "病人",
-    dataIndex: "patientName",
-    key: "patientId",
-    fixed: "left",
-    valueType: "select",
-    renderFormItem(_, config, form) {
-      return <ProFormSelect showSearch {...config} {...form} />;
-    },
-    request: requestPatients,
-  },
-  {
-    title: "文件原名",
-    dataIndex: "originalName",
-    key: "originalName",
-  },
-  {
-    title: "文件大小",
-    dataIndex: "size",
-    key: "size",
-    render: (_, entity) => toHumanReadableSize(entity.size),
-    hideInSearch: true,
-  },
-  { title: "文件描述", dataIndex: "description", key: "description" },
-  { title: "文件名", dataIndex: "filename", key: "filename" },
-  {
-    title: "下载次数",
-    dataIndex: "downloadCount",
-    key: "downloadCount",
-    hideInSearch: true,
-    width: 55,
-  },
-  {
-    title: "上传者",
-    key: "uploadedBy",
-    render: (_, entity) => (
-      <Tooltip
-        title={
-          entity.uploadedBy
-            ? `${entity.uploadedBy} - ${entity.uploadedByUsername}`
-            : entity.uploadedByUsername
-        }
-      >
-        {entity.uploadedByUsername}
-      </Tooltip>
-    ),
-  },
-  {
-    title: "操作",
-    valueType: "option",
-    render: () => {
-      return (
-        <Flex gap={8}>
-          <Button type="primary" size="small">
-            查看
-          </Button>
-          <Button size="small">下载</Button>
-          <Button
-            onClick={() => {
-              confirm({
-                title: "确认删除",
-                onOk() {},
-                onCancel() {},
-              });
-            }}
-            danger
-            size="small"
-          >
-            删除
-          </Button>
-        </Flex>
-      );
-    },
-  },
-];
-
 function RamanListPage() {
   const actionRef = useRef<ActionType>(null);
-
+  const columns: ProColumns<FileInfo>[] = [
+    {
+      title: "病人",
+      dataIndex: "patientName",
+      key: "patientId",
+      fixed: "left",
+      valueType: "select",
+      renderFormItem(_, config, form) {
+        return <ProFormSelect showSearch {...config} {...form} />;
+      },
+      request: requestPatients,
+    },
+    {
+      title: "文件原名",
+      dataIndex: "originalName",
+      key: "originalName",
+    },
+    {
+      title: "文件大小",
+      dataIndex: "size",
+      key: "size",
+      render: (_, entity) => toHumanReadableSize(entity.size),
+      hideInSearch: true,
+    },
+    { title: "文件描述", dataIndex: "description", key: "description" },
+    { title: "文件名", dataIndex: "filename", key: "filename" },
+    {
+      title: "下载查看次数",
+      dataIndex: "downloadCount",
+      key: "downloadCount",
+      hideInSearch: true,
+      width: 55,
+    },
+    {
+      title: "上传者",
+      key: "uploadedBy",
+      render: (_, entity) => (
+        <Tooltip
+          title={
+            entity.uploadedBy
+              ? `${entity.uploadedBy} - ${entity.uploadedByUsername}`
+              : entity.uploadedByUsername
+          }
+        >
+          {entity.uploadedByUsername}
+        </Tooltip>
+      ),
+    },
+    {
+      title: "操作",
+      valueType: "option",
+      width: 200,
+      render: (_, entity) => {
+        return (
+          <Flex gap={8}>
+            <Button type="primary" size="small">
+              查看
+            </Button>
+            <Button
+              size="small"
+              onClick={() =>
+                fileApi.downloadFile(
+                  { id: entity.id },
+                  `${entity.patientId}-${entity.patientName}-${entity.originalName}`,
+                )
+              }
+            >
+              下载
+            </Button>
+            <Button
+              onClick={() => {
+                confirm({
+                  title: "确认删除",
+                  onOk: async () => {
+                    try {
+                      await fileApi.DeleteFile({ id: entity.id });
+                      message.success("删除成功");
+                      actionRef.current?.reload();
+                    } catch (_) {
+                      message.error("删除失败，请重试");
+                    }
+                  },
+                });
+              }}
+              danger
+              size="small"
+            >
+              删除
+            </Button>
+          </Flex>
+        );
+      },
+    },
+  ];
   const renderUploadAction = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [form] = Form.useForm();
@@ -171,7 +187,6 @@ function RamanListPage() {
         <ProFormSelect
           name="patientId"
           label="关联病人"
-          width="md"
           showSearch
           rules={[{ required: true }]}
           request={requestPatients}

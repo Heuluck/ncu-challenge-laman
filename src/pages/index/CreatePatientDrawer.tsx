@@ -14,8 +14,10 @@ import {
 import { Button, Form, message } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { CreatePatient, UpdatePatient } from "../../api/patient/patient";
+import patientApi from "../../api/patient/patient";
 import type { PatientListItem } from "../../api/patient/patient-res";
+
+const { CreatePatient, UpdatePatient } = patientApi;
 
 type Props = {
   formOpen: boolean;

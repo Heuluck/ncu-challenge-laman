@@ -2,11 +2,13 @@ import type { ActionType, ProFormInstance } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { Button } from "antd";
 import CreatePatientDrawer from "./CreatePatientDrawer";
-import { GetPatientGroups, GetPatientList } from "../../api/patient/patient";
+import patientApi from "../../api/patient/patient";
 import type { PatientListItem } from "../../api/patient/patient-res";
 import { useEffect, useRef, useState } from "react";
 import { getColumns } from "./columns";
 import useUserStore from "../../store/user";
+
+const { GetPatientGroups, GetPatientList } = patientApi;
 
 const requestGroups = async () => {
   try {
