@@ -71,3 +71,10 @@ export interface AuthorizeDownloadRequest {
   fileId: number;
   userId: number;
 }
+
+export interface FileWithPatientRequest {
+  /**
+   * 文件 ID
+   */
+  id: number;
+}

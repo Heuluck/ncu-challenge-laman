@@ -4,8 +4,10 @@ import { useSearchParams } from "react-router";
 import { Spin, Upload } from "antd";
 import { InboxOutlined } from "@ant-design/icons";
 import { csvToData } from "../../utils/csv";
-import { getFile } from "../../api/file/file";
+import fileApi from "../../api/file/file";
 import axios from "axios";
+import PatientInfo from "../../component/patientInfo";
+import type { FileWithPatientResponse } from "../../api/file/file-res";
 
 const { Dragger } = Upload;
 
@@ -14,6 +16,12 @@ const RamanDetailPage = () => {
     useState<
       { wavelength: number; intensity: number; category: string | undefined }[]
     >();
+  const [fileWithPatient, setFileWithPatient] =
+    useState<FileWithPatientResponse["data"] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [searchParams] = useSearchParams();
+  const csvId = searchParams.get("id");
 
   const config: LineConfig = {
     data: ramanData,
@@ -48,25 +56,23 @@ const RamanDetailPage = () => {
       lineWidth: 2,
     },
   };
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     const controller = new AbortController();
     async function fetchData() {
-      const csvId = searchParams.get("id");
       if (!csvId) return;
       const idNum = Number(csvId);
       if (Number.isNaN(idNum)) {
-        setError("csv id 不是有效的数字");
+        setError("id 不是有效的数字");
         return;
       }
       setLoading(true);
       try {
-        const text = await getFile({ id: idNum }, controller.signal);
+        const text = await fileApi.getFile({ id: idNum }, controller.signal);
+        const fileWithPatient = await fileApi.GetFileWithPatient({ id: idNum });
         const parsed = csvToData(text, `csv-${idNum}`);
         setRamanData(parsed.sort((a, b) => a.wavelength - b.wavelength));
+        setFileWithPatient(fileWithPatient.data);
       } catch (e) {
         if (controller.signal.aborted) return;
         if (axios.isAxiosError(e)) setError(String(e?.message || e));
@@ -77,9 +83,13 @@ const RamanDetailPage = () => {
     }
     fetchData();
     return () => {
+      // 取消未完成的请求
+      // 开发环境 useEffect 自己去执行两次给下载数量的数据搞脏了
+      // 就这个接口记录调用次数所以其他接口不用管了
       controller.abort();
-    }
-  }, [searchParams]);
+    };
+  }, [csvId]);
+
   return (
     <div className="flex flex-col items-center overflow-hidden">
       {loading ? (
@@ -103,44 +113,47 @@ const RamanDetailPage = () => {
           </div>
         )
       ) : null}
-      <Dragger
-        name="file"
-        className="w-full"
-        multiple={true}
-        maxCount={5}
-        onChange={(info) => {
-          const currentFiles = info.fileList;
-          if (currentFiles && currentFiles.length > 0) {
-            setRamanData([]);
-            currentFiles.forEach((currentFiles) => {
-              const file = currentFiles.originFileObj as File;
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const text = e.target?.result as string;
-                const parsed = csvToData(
-                  text,
-                  currentFiles.originFileObj?.name?.replace(/\.csv$/i, "") ||
-                    "未知文档",
-                );
-                setRamanData((prev) => {
-                  const newData = [...(prev || []), ...parsed];
-                  return newData.sort((a, b) => a.wavelength - b.wavelength);
-                });
-              };
-              reader.readAsText(file);
-            });
-          } else {
-            setRamanData(undefined);
-          }
-        }}
-        beforeUpload={() => false}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">本地拉曼光谱数据可视化</p>
-        <p className="ant-upload-hint">可添加多个文件，文件不会上传</p>
-      </Dragger>
+      <PatientInfo patient={fileWithPatient?.patient}  />
+      {!csvId && (
+        <Dragger
+          name="file"
+          className="w-full"
+          multiple={true}
+          maxCount={5}
+          onChange={(info) => {
+            const currentFiles = info.fileList;
+            if (currentFiles && currentFiles.length > 0) {
+              setRamanData([]);
+              currentFiles.forEach((currentFiles) => {
+                const file = currentFiles.originFileObj as File;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const text = e.target?.result as string;
+                  const parsed = csvToData(
+                    text,
+                    currentFiles.originFileObj?.name?.replace(/\.csv$/i, "") ||
+                      "未知文档",
+                  );
+                  setRamanData((prev) => {
+                    const newData = [...(prev || []), ...parsed];
+                    return newData.sort((a, b) => a.wavelength - b.wavelength);
+                  });
+                };
+                reader.readAsText(file);
+              });
+            } else {
+              setRamanData(undefined);
+            }
+          }}
+          beforeUpload={() => false}
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">本地拉曼光谱数据可视化</p>
+          <p className="ant-upload-hint">可添加多个文件，文件不会上传</p>
+        </Dragger>
+      )}
     </div>
   );
 };

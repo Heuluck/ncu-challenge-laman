@@ -21,6 +21,7 @@ const apiPaths = {
     upload: "/file/upload",
     download: "/file/download",
     list: "/file/list",
+    fileWithPatient: "/file/detail",
     types: "/file/types",
     delete: "/file/delete",
     authorizeDownload: "/file/authorize-download",

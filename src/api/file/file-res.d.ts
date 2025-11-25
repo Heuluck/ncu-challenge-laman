@@ -2,6 +2,8 @@
  * File 响应类型声明
  */
 
+import type { PatientListItem } from "../patient/patient-res";
+
 export interface FileInfo {
   id: number;
   filename: string;
@@ -72,4 +74,13 @@ export interface AuthorizeDownloadResponse {
     token?: string;
     expiresAt?: string;
   } | null;
+}
+
+export interface FileWithPatientResponse {
+  msg?: string;
+  status?: number;
+  data?: {
+    file?: FileInfo;
+    patient?: PatientListItem;
+  };
 }

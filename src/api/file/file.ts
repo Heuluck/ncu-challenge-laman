@@ -125,6 +125,15 @@ export const GetFileList = (
 };
 
 /**
+ * 获取单个文件和对应的病人信息
+ */
+export const GetFileWithPatient = (
+  data: req.FileWithPatientRequest,
+): Promise<res.FileWithPatientResponse> => {
+  return instance.post(apiPaths.file.fileWithPatient, data);
+};
+
+/**
  * 获取文件类型列表
  */
 export const GetFileTypes = (): Promise<res.FileTypesResponse> => {
@@ -156,6 +165,7 @@ export default {
   getFile,
   downloadFile,
   GetFileList,
+  GetFileWithPatient,
   GetFileTypes,
   DeleteFile,
   AuthorizeDownload,
