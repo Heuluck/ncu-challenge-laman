@@ -3,10 +3,11 @@ import Login from "./pages/login";
 import BaseLayout from "./layout/base";
 import RequireAuth from "./layout/RequireAuth";
 import Index from "./pages/index";
-import UsersPage from "./pages/users";
+import UsersPage from "./pages/user";
 import Raman from "./pages/raman";
 import "./App.css";
 import RamanDetailPage from "./pages/raman/view";
+import DownloadReqPage from "./pages/user/download-req";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         >
           <Route index element={<Index />} />
           <Route path="/user" element={<UsersPage />} />
+          <Route path="/user/download-req" element={<DownloadReqPage />} />
           <Route path="/raman" element={<Raman />} />
           <Route path="/raman/view" element={<RamanDetailPage />} />
         </Route>

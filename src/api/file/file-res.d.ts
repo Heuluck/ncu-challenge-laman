@@ -17,7 +17,6 @@ export interface FileInfo {
   createdAt?: string;
   uploadedBy?: number;
   uploadedByUsername?: string;
-  importedTable?: string;
   patientId?: number;
   patientName?: string;
 }
@@ -113,20 +112,21 @@ export interface RequestListResponse {
   msg?: string;
   status?: number;
   data?: {
-    items?: {
-      createdAt?: Date;
-      fileId?: number;
-      filename?: string;
-      id?: number;
-      message?: string;
-      originalName?: string;
-      patientGroup?: string;
-      patientName?: string;
-      status?: string;
-      userId?: number;
-      username?: string;
-    };
-    [];
+    items?: requestListItem[];
     pagination?: Pagination;
   };
+}
+
+export interface requestListItem {
+  createdAt?: Date;
+  fileId?: number;
+  filename?: string;
+  id?: number;
+  message?: string;
+  originalName?: string;
+  patientGroup?: string;
+  patientName?: string;
+  status?: string;
+  userId?: number;
+  username?: string;
 }

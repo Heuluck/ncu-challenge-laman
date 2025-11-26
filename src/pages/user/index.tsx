@@ -8,10 +8,10 @@ import {
 } from "@ant-design/pro-components";
 import { Button, Form, message, Modal } from "antd";
 import { useRef, useState } from "react";
-import type * as req from "../api/user/user-req";
-import userApi from "../api/user/user";
-import useUserPermission from "../hook/useUserPermission";
-import type { userData } from "../api/user/user-res";
+import type * as req from "../../api/user/user-req";
+import userApi from "../../api/user/user";
+import useUserPermission from "../../hook/useUserPermission";
+import type { userData } from "../../api/user/user-res";
 
 function UserPage() {
   const actionRef = useRef<ActionType>(null);

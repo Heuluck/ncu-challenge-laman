@@ -5,6 +5,7 @@ import {
   HomeFilled,
   LineChartOutlined,
   LogoutOutlined,
+  ProfileOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import {
@@ -41,6 +42,13 @@ const routeList = {
       path: "/user",
       name: "用户管理",
       icon: <UserOutlined />,
+      routes: [
+        {
+          icon: <ProfileOutlined />,
+          path: "/user/download-req",
+          name: "下载请求",
+        },
+      ],
     },
   ],
 };
