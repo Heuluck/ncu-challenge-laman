@@ -1,13 +1,60 @@
 import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
-import { ProTable } from "@ant-design/pro-components";
+import { ProFormSelect, ProTable } from "@ant-design/pro-components";
 import { Button, message, Modal, Tooltip } from "antd";
 import { useRef } from "react";
 import fileApi from "../../api/file/file";
+import patientApi from "../../api/patient/patient";
+import userApi from "../../api/user/user";
 import useUserPermission from "../../hook/useUserPermission";
 import type { requestListItem } from "../../api/file/file-res";
 import { Link } from "react-router";
 import dayjs from "dayjs";
+import type { UserPermission } from "../../api/user/user-req";
+
+const requestUsers = async (permission: UserPermission) => {
+  try {
+    const resp = await userApi.GetUserList({
+      userPermission: permission,
+      page: 1,
+      limit: 10000,
+    });
+    const items = resp.data?.items || [];
+    return items.map((p) => ({
+      label: `${p.username}(${p.id})`,
+      value: p.id,
+    }));
+  } catch (_) {
+    return [];
+  }
+};
+
+const requestPatients = async () => {
+  try {
+    const resp = await patientApi.GetPatientList({ page: 1, limit: 10000 });
+    const items = resp.data?.items || [];
+    return items.map((p) => ({
+      label: `${p.name} (${p.serialNo})`,
+      value: p.id,
+    }));
+  } catch (_) {
+    return [];
+  }
+};
+
+const requestGroups = async () => {
+  try {
+    const data = await patientApi.GetPatientGroups();
+    const groups = data.data?.groups || [];
+    return groups.map((group) => ({
+      label: group,
+      value: group,
+    }));
+  } catch (e) {
+    console.error("获取组别列表失败:", e);
+  }
+  return [];
+};
 
 function DownloadReqPage() {
   const actionRef = useRef<ActionType>(null);
@@ -21,6 +68,10 @@ function DownloadReqPage() {
       key: "username",
       fixed: "left",
       width: 120,
+      renderFormItem(_, config, form) {
+        return <ProFormSelect showSearch {...config} {...form} />;
+      },
+      request: () => requestUsers("访客"),
       render: (_text, record) => {
         return (
           <Tooltip title={`${record.userId} - ${record.username}`}>
@@ -32,7 +83,11 @@ function DownloadReqPage() {
     {
       title: "相关患者",
       dataIndex: "patientName",
-      key: "patientName",
+      key: "patientId",
+      request: requestPatients,
+      renderFormItem(_, config, form) {
+        return <ProFormSelect showSearch {...config} {...form} />;
+      },
       render: (_text, record) => {
         return (
           <Tooltip
@@ -58,7 +113,21 @@ function DownloadReqPage() {
       },
     },
     { title: "请求理由", dataIndex: "message", key: "message", ellipsis: true },
-    { title: "病人组别", dataIndex: "patientGroup", key: "patientGroup" },
+    {
+      title: "病人组别",
+      dataIndex: "patientGroup",
+      key: "patientGroup",
+      request: requestGroups,
+      render: (_text, record) => {
+        return (
+          <Tooltip
+            title={`${record.patientId} - ${record.patientName}(${record.patientSerialNo})`}
+          >
+            {record.patientName}
+          </Tooltip>
+        );
+      },
+    },
     {
       title: "文件名",
       dataIndex: "filename",

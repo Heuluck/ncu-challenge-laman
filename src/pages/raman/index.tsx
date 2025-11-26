@@ -27,7 +27,7 @@ export type TableListItem = {
 
 const requestPatients = async () => {
   try {
-    const resp = await GetPatientList({ page: 1, limit: 200 });
+    const resp = await GetPatientList({ page: 1, limit: 10000 });
     const items = resp.data?.items || [];
     return items.map((p) => ({
       label: `${p.name} (${p.serialNo})`,
