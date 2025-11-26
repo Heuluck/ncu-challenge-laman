@@ -44,6 +44,14 @@ function RamanListPage() {
 
   const columns: ProColumns<FileListInfo>[] = [
     {
+      title: "编号",
+      dataIndex: "id",
+      key: "id",
+      fixed: "left",
+      width: 45,
+      hideInSearch: true,
+    },
+    {
       title: "病人",
       dataIndex: "patientName",
       key: "patientId",
@@ -107,7 +115,9 @@ function RamanListPage() {
                     message: "我想下载",
                   });
                   message.success("请求已发送，等待管理员批准");
-                } catch (_) { /* empty */ }
+                } catch (_) {
+                  /* empty */
+                }
               }}
             >
               请求权限

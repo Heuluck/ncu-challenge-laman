@@ -63,6 +63,14 @@ function DownloadReqPage() {
 
   const columns: ProColumns<requestListItem>[] = [
     {
+      title: "编号",
+      dataIndex: "id",
+      key: "id",
+      fixed: "left",
+      width: 45,
+      hideInSearch: true,
+    },
+    {
       title: "请求人",
       dataIndex: "username",
       key: "username",
@@ -114,16 +122,25 @@ function DownloadReqPage() {
     },
     { title: "请求理由", dataIndex: "message", key: "message", ellipsis: true },
     {
+      title: "请求时间",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (_text, record) => {
+        return dayjs((record.createdAt ?? 0) * 1000).format("YYYY-MM-DD HH:mm");
+      },
+    },
+    {
       title: "病人组别",
       dataIndex: "patientGroup",
       key: "patientGroup",
       request: requestGroups,
       render: (_text, record) => {
+        if(!record.patientGroup) return "-";
         return (
           <Tooltip
             title={`${record.patientId} - ${record.patientName}(${record.patientSerialNo})`}
           >
-            {record.patientName}
+            {record.patientGroup}
           </Tooltip>
         );
       },

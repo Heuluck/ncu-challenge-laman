@@ -1,6 +1,5 @@
 import type { ActionType, ProFormInstance } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
-import { Button } from "antd";
 import CreatePatientDrawer from "./CreatePatientDrawer";
 import patientApi from "../../api/patient/patient";
 import type { PatientListItem } from "../../api/patient/patient-res";
@@ -80,7 +79,6 @@ function IndexPage() {
       dateFormatter="string"
       headerTitle="表格标题"
       toolBarRender={() => [
-        <Button key="out">导出数据</Button>,
         isAdmin && (
           <CreatePatientDrawer
             key="create"
