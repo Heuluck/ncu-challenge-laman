@@ -25,7 +25,7 @@ export interface PatientListItem {
   preTreatment: boolean; // 采样前是否接受治疗
   treatmentType?: string | null; // 接受何种治疗
   memo: string; // 备注
-  createdAt?: string;
+  createdAt?: number;
 }
 
 /**

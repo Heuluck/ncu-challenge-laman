@@ -14,7 +14,7 @@ export interface FileInfo {
   description?: string;
   metadata?: object | string;
   downloadCount?: number;
-  createdAt?: string;
+  createdAt?: number;
   uploadedBy?: number;
   uploadedByUsername?: string;
   patientId?: number;
@@ -69,9 +69,9 @@ export interface AuthorizeDownloadResponse {
   msg?: string;
   status?: number;
   data?: {
-    url?: string;
-    token?: string;
-    expiresAt?: string;
+    username?: string;
+    fileId?: number;
+    expiresAt?: number;
   } | null;
 }
 
@@ -93,7 +93,7 @@ export interface RequestDownloadResponse {
   msg?: string;
   status?: number;
   data?: null | {
-    createdAt?: Date;
+    createdAt?: number;
     fileId?: number;
     id?: number;
     message?: string;
@@ -118,7 +118,7 @@ export interface RequestListResponse {
 }
 
 export interface requestListItem {
-  createdAt?: Date;
+  createdAt?: number;
   fileId?: number;
   filename?: string;
   id?: number;
@@ -126,7 +126,10 @@ export interface requestListItem {
   originalName?: string;
   patientGroup?: string;
   patientName?: string;
+  patientId?: number;
+  patientSerialNo?: string;
   status?: string;
   userId?: number;
   username?: string;
+  expiresAt?: number;
 }

@@ -70,6 +70,13 @@ export interface DeleteFileRequest {
 export interface AuthorizeDownloadRequest {
   fileId: number;
   userId: number;
+  expireIn?: number;
+}
+
+export interface AuthorizeDownloadRequestDirect {
+  requestId: number;
+  action: "approve" | "reject";
+  expiresIn: number;
 }
 
 export interface FileWithPatientRequest {
@@ -83,28 +90,28 @@ export interface FileWithPatientRequest {
  * RequestDownloadRequest
  */
 export interface RequestDownloadRequest {
-    fileId: number;
-    /**
-     * 申请说明，可选
-     */
-    message?: string;
+  fileId: number;
+  /**
+   * 申请说明，可选
+   */
+  message?: string;
 }
 
 /**
  * RequestListRequest
  */
 export interface RequestListRequest {
-    fileId?: number;
-    limit?: number;
-    page?: number;
-    /**
-     * 按患者分组精确匹配
-     */
-    patientGroup?: string;
-    /**
-     * 按患者姓名模糊搜索
-     */
-    patientName?: string;
-    status?: string;
-    userId?: number;
+  fileId?: number;
+  limit?: number;
+  page?: number;
+  /**
+   * 按患者分组精确匹配
+   */
+  patientGroup?: string;
+  /**
+   * 按患者姓名模糊搜索
+   */
+  patientName?: string;
+  status?: string;
+  userId?: number;
 }

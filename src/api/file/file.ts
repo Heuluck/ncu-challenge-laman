@@ -155,7 +155,7 @@ export const DeleteFile = (
  * 超级管理员权限
  */
 export const AuthorizeDownload = (
-  data: req.AuthorizeDownloadRequest,
+  data: req.AuthorizeDownloadRequest | req.AuthorizeDownloadRequestDirect,
 ): Promise<res.AuthorizeDownloadResponse> => {
   return instance.post(apiPaths.file.authorizeDownload, data);
 };
