@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { CopyOutlined, PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import {
   ProTable,
@@ -12,7 +12,6 @@ import type * as req from "../api/user/user-req";
 import userApi from "../api/user/user";
 import useUserPermission from "../hook/useUserPermission";
 import type { userData } from "../api/user/user-res";
-// columns will be declared inside the component to access refs and permissions
 
 function UserPage() {
   const actionRef = useRef<ActionType>(null);
@@ -21,7 +20,27 @@ function UserPage() {
   const showPasswordModal = (password: string, title = "密码") => {
     Modal.info({
       title,
-      content: <div>{password}</div>,
+      content: (
+        <div className="my-3">
+          <span>请妥善保存新密码，并及时修改：</span>
+          <div className="flex items-center justify-between rounded-lg border border-gray-300 bg-gray-0 shadow-md shadow-gray-200">
+            <span className="px-4 select-all">{password}</span>
+            <button
+              onClick={() => {
+                try {
+                  navigator.clipboard.writeText(password);
+                  message.success("复制成功");
+                } catch (_) {
+                  message.success("复制失败");
+                }
+              }}
+              className="ml-2 rounded-r-lg border-l border-gray-300 bg-gray-200 px-2 py-1 hover:cursor-pointer hover:bg-gray-300 active:bg-gray-400"
+            >
+              <CopyOutlined style={{ height: 18, width: 18 }} />
+            </button>
+          </div>
+        </div>
+      ),
       okText: "关闭",
     });
   };
@@ -174,7 +193,9 @@ function UserPage() {
                 values.userPermission as req.UserPermission;
             if (values.department) payload.department = values.department;
             if (values.phone) payload.phone = values.phone;
-            const resp = await userApi.CreateUser(payload as req.CreateUserRequest);
+            const resp = await userApi.CreateUser(
+              payload as req.CreateUserRequest,
+            );
             const pwd = resp.data?.password || "无法获取密码";
             showPasswordModal(pwd, "初始密码");
             message.success("创建成功");
