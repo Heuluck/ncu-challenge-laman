@@ -28,6 +28,8 @@ const apiPaths = {
     types: "/file/types",
     delete: "/file/delete",
     authorizeDownload: "/file/authorize-download",
+    requestDownload: "/file/request-download",
+    requestList: "/file/request-list",
   },
 };
 

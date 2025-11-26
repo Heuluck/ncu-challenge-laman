@@ -84,3 +84,49 @@ export interface FileWithPatientResponse {
     patient?: PatientListItem;
   };
 }
+
+/**
+ * RequestDownloadResponse
+ *
+ * BaseResponse
+ */
+export interface RequestDownloadResponse {
+  msg?: string;
+  status?: number;
+  data?: null | {
+    createdAt?: Date;
+    fileId?: number;
+    id?: number;
+    message?: string;
+    status?: string;
+    userId?: number;
+    username?: string;
+  };
+}
+
+/**
+ * RequestListResponse
+ *
+ * BaseResponse
+ */
+export interface RequestListResponse {
+  msg?: string;
+  status?: number;
+  data?: {
+    items?: {
+      createdAt?: Date;
+      fileId?: number;
+      filename?: string;
+      id?: number;
+      message?: string;
+      originalName?: string;
+      patientGroup?: string;
+      patientName?: string;
+      status?: string;
+      userId?: number;
+      username?: string;
+    };
+    [];
+    pagination?: Pagination;
+  };
+}

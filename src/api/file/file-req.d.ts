@@ -78,3 +78,33 @@ export interface FileWithPatientRequest {
    */
   id: number;
 }
+
+/**
+ * RequestDownloadRequest
+ */
+export interface RequestDownloadRequest {
+    fileId: number;
+    /**
+     * 申请说明，可选
+     */
+    message?: string;
+}
+
+/**
+ * RequestListRequest
+ */
+export interface RequestListRequest {
+    fileId?: number;
+    limit?: number;
+    page?: number;
+    /**
+     * 按患者分组精确匹配
+     */
+    patientGroup?: string;
+    /**
+     * 按患者姓名模糊搜索
+     */
+    patientName?: string;
+    status?: string;
+    userId?: number;
+}

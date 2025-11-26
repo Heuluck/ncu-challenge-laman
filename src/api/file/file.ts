@@ -160,6 +160,26 @@ export const AuthorizeDownload = (
   return instance.post(apiPaths.file.authorizeDownload, data);
 };
 
+/**
+ * 请求下载文件
+ * 仅访客权限
+ */
+export const RequestDownload = (
+  data: req.RequestDownloadRequest,
+): Promise<res.RequestDownloadResponse> => {
+  return instance.post(apiPaths.file.requestDownload, data);
+};
+
+/**
+ * 获取下载请求列表
+ * 超级管理员权限
+ */
+export const RequestList = (
+  data: req.RequestListRequest,
+): Promise<res.RequestListResponse> => {
+  return instance.post(apiPaths.file.requestList, data);
+};
+
 export default {
   UploadFile,
   getFile,
@@ -169,4 +189,6 @@ export default {
   GetFileTypes,
   DeleteFile,
   AuthorizeDownload,
+  RequestDownload,
+  RequestList,
 } as const;
