@@ -3,7 +3,6 @@ import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProTable } from "@ant-design/pro-components";
 import { Button, message, Modal, Tooltip } from "antd";
 import { useRef } from "react";
-import userApi from "../../api/user/user";
 import fileApi from "../../api/file/file";
 import useUserPermission from "../../hook/useUserPermission";
 import type { requestListItem } from "../../api/file/file-res";
@@ -44,13 +43,19 @@ function DownloadReqPage() {
         );
       },
     },
-    { title: "文件原名", dataIndex: "originalName", key: "originalName", render: (_text, record) => {
+    {
+      title: "文件原名",
+      dataIndex: "originalName",
+      key: "originalName",
+      render: (_text, record) => {
         return (
-          <Tooltip title={`${record.fileId} - ${record.originalName} - ${record.filename}`}>
+          <Tooltip
+            title={`${record.fileId} - ${record.originalName} - ${record.filename}`}
+          >
             {record.originalName}
           </Tooltip>
         );
-      }
+      },
     },
     { title: "请求理由", dataIndex: "message", key: "message", ellipsis: true },
     { title: "病人组别", dataIndex: "patientGroup", key: "patientGroup" },
@@ -77,9 +82,17 @@ function DownloadReqPage() {
           color = "red";
           text = "已拒绝";
         }
-        return <Tooltip title={record.status === "approved" && record.expiresAt ? `有效期至 ${dayjs(record.expiresAt * 1000).format("YYYY-MM-DD HH:mm")}` : ""}>
-          <span style={{ color }}>{text}</span>
-        </Tooltip>;
+        return (
+          <Tooltip
+            title={
+              record.status === "approved" && record.expiresAt
+                ? `有效期至 ${dayjs(record.expiresAt * 1000).format("YYYY-MM-DD HH:mm")}`
+                : ""
+            }
+          >
+            <span style={{ color }}>{text}</span>
+          </Tooltip>
+        );
       },
       request: async () => {
         return [
@@ -96,14 +109,14 @@ function DownloadReqPage() {
       render: (_text, entity) => {
         if (!permission.hasSuperPermission) return <p>无权限操作</p>;
         return [
-          permission.hasSuperPermission && (
+          permission.hasSuperPermission && entity.status !== "approved" && (
             <Button
               key="approve"
               size="small"
               type="primary"
               onClick={() => {
                 confirm({
-                  title: "批准后无法撤销，确定批准该请求吗？",                  
+                  title: "批准后无法撤销，确定批准该请求吗？",
                   onOk: async () => {
                     if (!entity.id) {
                       message.error("请求 ID 不存在");
@@ -116,7 +129,9 @@ function DownloadReqPage() {
                         expiresIn: 1,
                       });
                       console.log(res.data?.expiresAt);
-                      message.success(`已批准，将在 ${dayjs(res.data?.expiresAt).format("YYYY-MM-DD HH:mm")} 失效`);
+                      message.success(
+                        `已批准，将在 ${dayjs((res.data?.expiresAt ?? 0) * 1000).format("YYYY-MM-DD HH:mm")} 失效`,
+                      );
                       actionRef.current?.reload();
                     } catch (err) {
                       console.error(err);
@@ -128,29 +143,40 @@ function DownloadReqPage() {
               同意
             </Button>
           ),
-          permission.hasSuperPermission && (
-            <Button
-              key="reject"
-              size="small"
-              danger
-              onClick={() => {
-                confirm({
-                  title: "确定拒绝该请求吗？",
-                  onOk: async () => {
-                    try {
-                      await userApi.DeleteUser({ id: entity.id as number });
-                      message.success("删除成功");
-                      actionRef.current?.reload();
-                    } catch (err) {
-                      console.error(err);
-                    }
-                  },
-                });
-              }}
-            >
-              拒绝
-            </Button>
-          ),
+          permission.hasSuperPermission &&
+            entity.status !== "approved" &&
+            entity.status !== "rejected" && (
+              <Button
+                key="reject"
+                size="small"
+                danger
+                onClick={() => {
+                  confirm({
+                    title: "确定拒绝该请求吗？（拒绝后仍可批准）",
+                    onOk: async () => {
+                      if (!entity.id) {
+                        message.error("请求 ID 不存在");
+                        return;
+                      }
+                      try {
+                        const res = await fileApi.AuthorizeDownload({
+                          requestId: entity.id,
+                          action: "reject",
+                          expiresIn: 1,
+                        });
+                        console.log(res.data?.expiresAt);
+                        message.success("已拒绝");
+                        actionRef.current?.reload();
+                      } catch (err) {
+                        console.error(err);
+                      }
+                    },
+                  });
+                }}
+              >
+                拒绝
+              </Button>
+            ),
           permission.hasSuperPermission && (
             <Button key="lookup" size="small" onClick={() => {}}>
               <Link to={`/raman/view?id=${entity.fileId}`} target="_blank">

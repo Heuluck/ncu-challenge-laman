@@ -42,11 +42,13 @@ export interface Pagination {
   totalPages?: number;
 }
 
+export type FileListInfo = (FileInfo & { hasPermission: boolean })
+
 export interface FileListResponse {
   msg?: string;
   status?: number;
   data?: {
-    files?: FileInfo[];
+    files?: FileListInfo[];
     pagination?: Pagination;
   } | null;
 }

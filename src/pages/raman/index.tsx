@@ -11,7 +11,7 @@ import { Button, Modal, Form, message, Tooltip } from "antd";
 import fileApi from "../../api/file/file";
 import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
-import type { FileInfo } from "../../api/file/file-res";
+import type { FileListInfo } from "../../api/file/file-res";
 import { useRef } from "react";
 import { Link } from "react-router";
 import useUserPermission from "../../hook/useUserPermission";
@@ -42,7 +42,7 @@ function RamanListPage() {
   const actionRef = useRef<ActionType>(null);
   const permission = useUserPermission();
 
-  const columns: ProColumns<FileInfo>[] = [
+  const columns: ProColumns<FileListInfo>[] = [
     {
       title: "病人",
       dataIndex: "patientName",
@@ -95,10 +95,29 @@ function RamanListPage() {
       valueType: "option",
       width: 200,
       render: (_, entity) => {
-        if (!permission.hasCommonPermission) return <p>无权限操作</p>;
+        if (!permission.hasCommonPermission && !entity.hasPermission)
+          return [
+            <Button
+              type="primary"
+              size="small"
+              onClick={async () => {
+                try {
+                  await fileApi.RequestDownload({
+                    fileId: entity.id,
+                    message: "我想下载",
+                  });
+                  message.success("请求已发送，等待管理员批准");
+                } catch (_) { /* empty */ }
+              }}
+            >
+              请求权限
+            </Button>,
+          ];
         return [
           <Button type="primary" size="small">
-            <Link to={`view?id=${entity.id}`} target="_blank">查看</Link>
+            <Link to={`view?id=${entity.id}`} target="_blank">
+              查看
+            </Link>
           </Button>,
           <Button
             size="small"
@@ -111,24 +130,28 @@ function RamanListPage() {
           >
             下载
           </Button>,
-          permission.hasSuperPermission && <Button
-            onClick={() => {
-              confirm({
-                title: "确认删除",
-                onOk: async () => {
-                  try {
-                    await fileApi.DeleteFile({ id: entity.id });
-                    message.success("删除成功");
-                    actionRef.current?.reload();
-                  } catch (_) { /* empty */ }
-                },
-              });
-            }}
-            danger
-            size="small"
-          >
-            删除
-          </Button>,
+          permission.hasSuperPermission && (
+            <Button
+              onClick={() => {
+                confirm({
+                  title: "确认删除",
+                  onOk: async () => {
+                    try {
+                      await fileApi.DeleteFile({ id: entity.id });
+                      message.success("删除成功");
+                      actionRef.current?.reload();
+                    } catch (_) {
+                      /* empty */
+                    }
+                  },
+                });
+              }}
+              danger
+              size="small"
+            >
+              删除
+            </Button>
+          ),
         ];
       },
     },
@@ -196,7 +219,7 @@ function RamanListPage() {
   };
 
   return (
-    <ProTable<FileInfo>
+    <ProTable<FileListInfo>
       columns={columns}
       actionRef={actionRef}
       columnsState={{
@@ -229,7 +252,9 @@ function RamanListPage() {
       }}
       dateFormatter="string"
       headerTitle="表格标题"
-      toolBarRender={() => [permission.hasAdminPermission && renderUploadAction()]}
+      toolBarRender={() => [
+        permission.hasAdminPermission && renderUploadAction(),
+      ]}
     />
   );
 }
