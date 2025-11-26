@@ -53,7 +53,16 @@ function UserPage() {
       fixed: "left",
       width: 120,
     },
-    { title: "权限", dataIndex: "userPermission", key: "userPermission" },
+    { title: "权限", dataIndex: "userPermission", key: "userPermission", valueType: "select",
+      request: async () => {
+        return [
+          { label: "超级管理员", value: "超级管理员" },
+          { label: "管理员", value: "管理员" },
+          { label: "用户", value: "用户" },
+          { label: "访客", value: "访客" },
+        ];
+      }
+    },
     { title: "部门", dataIndex: "department", key: "department" },
     { title: "电话", dataIndex: "phone", key: "phone" },
     {
