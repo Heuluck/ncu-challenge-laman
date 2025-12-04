@@ -33,7 +33,7 @@ const requestPatients = async () => {
     const resp = await patientApi.GetPatientList({ page: 1, limit: 10000 });
     const items = resp.data?.items || [];
     return items.map((p) => ({
-      label: `${p.caseNo} (${p.abbr} - ${p.diagnosis})`,
+      label: `${p.caseNo} (${p.abbr} - ${p.gender} - ${p.diagnosis})`,
       value: p.id,
     }));
   } catch (_) {
