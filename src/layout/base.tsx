@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   AreaChartOutlined,
   CloseCircleOutlined,
   ExperimentOutlined,
+// @ts-expect-error 以防后面还要用
   GithubFilled,
   HomeFilled,
   LineChartOutlined,
@@ -16,6 +18,7 @@ import {
   ProLayout,
   type ProLayoutProps,
 } from "@ant-design/pro-components";
+// @ts-expect-error 以防后面还要用
 import { Avatar, ConfigProvider, Dropdown, message, Tooltip } from "antd";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import useUserStore from "../store/user";
