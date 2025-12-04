@@ -36,8 +36,9 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
       width: 45,
       hideInSearch: true,
     },
-    { title: "姓名", dataIndex: "name", key: "name", fixed: "left", width: 70 },
-    { title: "缩写", dataIndex: "abbr", key: "abbr" },
+    { title: "病案号", dataIndex: "caseNo", key: "caseNo", width: 120, fixed: "left" },
+    { title: "缩写", dataIndex: "abbr", key: "abbr", fixed: "left", width: 80 },
+    { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
     { title: "性别", dataIndex: "gender", key: "gender" },
     {
       title: "年龄",
@@ -58,6 +59,7 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
         }),
       },
     },
+    { title: "诊断", dataIndex: "diagnosis", key: "diagnosis", width: 150 },
     {
       title: "住院/门诊",
       dataIndex: "inpatientOutpatient",
@@ -102,9 +104,6 @@ export function getColumns(deps: ColumnsDeps): ProColumns<PatientListItem>[] {
               .format("YYYY-MM-DD")
           : undefined,
     },
-    { title: "流水号", dataIndex: "serialNo", key: "serialNo" },
-    { title: "病案号", dataIndex: "caseNo", key: "caseNo" },
-    { title: "诊断", dataIndex: "diagnosis", key: "diagnosis", width: 150 },
     {
       title: "是否已检",
       dataIndex: "isTested",

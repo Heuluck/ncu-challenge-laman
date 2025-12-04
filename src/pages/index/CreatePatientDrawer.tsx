@@ -104,17 +104,10 @@ function CreatePatientDrawer({
     >
       <ProForm.Group>
         <ProFormText
-          name="name"
-          width="md"
-          label="病人姓名"
-          placeholder="请输入病人姓名"
-          rules={[{ required: true }]}
-        />
-        <ProFormText
           name="abbr"
           width="md"
           label="缩写"
-          placeholder="请输入病人姓名的拼音缩写"
+          placeholder="请输入用于区分病人的缩写"
           rules={[{ required: true }]}
         />
         <ProFormSelect
@@ -123,6 +116,13 @@ function CreatePatientDrawer({
           width="md"
           options={["男", "女", "未知", "其他"]}
           placeholder="请选择性别"
+          rules={[{ required: true }]}
+        />
+        <ProFormText
+          name="caseNo"
+          width="md"
+          label="病案号"
+          placeholder="请输入病案号"
           rules={[{ required: true }]}
         />
         <ProFormDigit
@@ -161,13 +161,6 @@ function CreatePatientDrawer({
           width="md"
           label="流水号"
           placeholder="请输入流水号"
-          rules={[{ required: true }]}
-        />
-        <ProFormText
-          name="caseNo"
-          width="md"
-          label="病案号"
-          placeholder="请输入病案号"
           rules={[{ required: true }]}
         />
       </ProForm.Group>

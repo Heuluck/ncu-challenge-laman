@@ -7,11 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import { getColumns } from "./columns";
 import useUserStore from "../../store/user";
 
-const { GetPatientGroups, GetPatientList } = patientApi;
-
 const requestGroups = async () => {
   try {
-    const data = await GetPatientGroups();
+    const data = await patientApi.GetPatientGroups();
     const groups = data.data?.groups || [];
     return groups.map((group) => ({
       label: group,
@@ -55,7 +53,7 @@ function IndexPage() {
       actionRef={actionRef}
       request={async (params, _sorter, _filter) => {
         const { current: page = 1, pageSize: limit = 10, ...rest } = params;
-        const data = await GetPatientList({
+        const data = await patientApi.GetPatientList({
           page,
           limit,
           ...rest,
