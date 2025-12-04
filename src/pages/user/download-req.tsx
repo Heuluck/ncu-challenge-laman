@@ -1,4 +1,3 @@
-import { PlusOutlined } from "@ant-design/icons";
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProFormSelect, ProTable } from "@ant-design/pro-components";
 import { Button, message, Modal, Tooltip } from "antd";
@@ -276,12 +275,7 @@ function DownloadReqPage() {
   ];
 
   const renderCreateAction = () => {
-    return (
-      <Button type="primary">
-        <PlusOutlined />
-        创建用户
-      </Button>
-    );
+    return null;
   };
 
   return (

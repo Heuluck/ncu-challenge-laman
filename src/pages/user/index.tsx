@@ -168,6 +168,7 @@ function UserPage() {
   const [editData, setEditData] = useState({ id: -1, isEdit: false });
 
   const renderCreateAction = () => {
+    if (!permission.hasSuperPermission) return null;
     return (
       <Button
         type="primary"
