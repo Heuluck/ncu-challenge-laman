@@ -33,7 +33,7 @@ const requestPatients = async () => {
     const resp = await patientApi.GetPatientList({ page: 1, limit: 10000 });
     const items = resp.data?.items || [];
     return items.map((p) => ({
-      label: `${p.name} (${p.serialNo})`,
+      label: `${p.caseNo} (${p.abbr} - ${p.diagnosis})`,
       value: p.id,
     }));
   } catch (_) {
@@ -98,9 +98,15 @@ function DownloadReqPage() {
       render: (_text, record) => {
         return (
           <Tooltip
-            title={`${record.patientId} - ${record.patientName}(${record.patientSerialNo})`}
+            title={`${
+              record.patientName
+            } (${record.patientGender}, ${record.patientAge}岁) - ${
+              record.patientDiagnosis
+            }`}
           >
-            {record.patientName}
+            <span>
+              {record.patientCaseNo} ({record.patientName})
+            </span>
           </Tooltip>
         );
       },
@@ -134,7 +140,7 @@ function DownloadReqPage() {
       key: "patientGroup",
       request: requestGroups,
       render: (_text, record) => {
-        if(!record.patientGroup) return "-";
+        if (!record.patientGroup) return "-";
         return (
           <Tooltip
             title={`${record.patientId} - ${record.patientName}(${record.patientSerialNo})`}

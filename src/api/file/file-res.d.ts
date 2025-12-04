@@ -19,6 +19,10 @@ export interface FileInfo {
   uploadedByUsername?: string;
   patientId?: number;
   patientName?: string;
+  patientGender?: string;
+  patientAge?: number;
+  patientDiagnosis?: string;
+  patientCaseNo?: string;
 }
 
 export interface FileUploadResponse {
@@ -130,6 +134,10 @@ export interface requestListItem {
   patientName?: string;
   patientId?: number;
   patientSerialNo?: string;
+  patientCaseNo?: string;
+  patientGender?: string;
+  patientAge?: number;
+  patientDiagnosis?: string;
   status?: string;
   userId?: number;
   username?: string;

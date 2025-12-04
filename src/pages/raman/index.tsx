@@ -52,8 +52,8 @@ function RamanListPage() {
       hideInSearch: true,
     },
     {
-      title: "病人",
-      dataIndex: "patientName",
+      title: "病人信息",
+      dataIndex: "patient",
       key: "patientId",
       fixed: "left",
       valueType: "select",
@@ -61,6 +61,21 @@ function RamanListPage() {
         return <ProFormSelect showSearch {...config} {...form} />;
       },
       request: requestPatients,
+      render(_, entity) {
+        return (
+          <Tooltip
+            title={`${
+              entity.patientName
+            } (${entity.patientGender}, ${entity.patientAge}岁) - ${
+              entity.patientDiagnosis
+            }`}
+          >
+            <span>
+              {entity.patientCaseNo} ({entity.patientName})
+            </span>
+          </Tooltip>
+        );
+      },
     },
     {
       title: "文件原名",

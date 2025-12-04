@@ -16,7 +16,6 @@ function patientListItemToInfo(item: PatientListItem | undefined) {
     item?.preTreatment !== undefined ? (item.preTreatment ? "是" : "否") : "-";
 
   return [
-    { key: "1", label: "病人姓名", children: item?.name ?? "-" },
     { key: "2", label: "流水号", children: item?.serialNo ?? "-" },
     { key: "3", label: "病案号", children: item?.caseNo ?? "-" },
     { key: "4", label: "缩写", children: item?.abbr ?? "-" },
