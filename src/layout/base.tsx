@@ -117,7 +117,7 @@ function BaseLayout() {
                       message.warning(`无权限访问`);
                     }}
                   >
-                    {dom}
+                    {dom}(无权限)
                     <CloseCircleOutlined style={{ color: "red" }} />
                   </button>
                 );
@@ -186,23 +186,23 @@ function BaseLayout() {
                 );
               },
             }}
-            actionsRender={(props) => {
-              if (props.isMobile) return [];
-              if (typeof window === "undefined") return [];
-              return [
-                <Tooltip title="项目仓库">
-                  <a
-                    style={{ color: "#868686" }}
-                    className="flex"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://github.com/heuluck/ncu-challenge-laman-DB"
-                  >
-                    <GithubFilled key="GithubFilled" />
-                  </a>
-                </Tooltip>,
-              ];
-            }}
+            // actionsRender={(props) => {
+            //   if (props.isMobile) return [];
+            //   if (typeof window === "undefined") return [];
+            //   return [
+            //     <Tooltip title="项目仓库">
+            //       <a
+            //         style={{ color: "#868686" }}
+            //         className="flex"
+            //         target="_blank"
+            //         rel="noopener noreferrer"
+            //         href="https://github.com/heuluck/ncu-challenge-laman-DB"
+            //       >
+            //         <GithubFilled key="GithubFilled" />
+            //       </a>
+            //     </Tooltip>,
+            //   ];
+            // }}
           >
             <PageContainer>
               <ProCard>
