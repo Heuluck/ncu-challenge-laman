@@ -6,6 +6,7 @@ import { Login, Me } from "../api/user/user";
 import { useNavigate } from "react-router";
 import useUserStore from "../store/user";
 import { useEffect } from "react";
+import background from "../assets/bg.png"
 
 function LoginPage() {
   const back = useBack("/");
@@ -19,9 +20,12 @@ function LoginPage() {
   }, []);
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gray-100">
+    <div className="flex h-screen w-screen items-center justify-center bg-center bg-cover"
+    style={{
+      backgroundImage: `url(${background})`
+    }}>
       <div
-        className="relative h-min rounded-lg bg-white shadow-lg"
+        className="relative h-min rounded-lg bg-white/70 backdrop-blur-sm shadow-lg"
         style={{
           backgroundImage:
             "radial-gradient(circle at 93% 1e+02%, rgba(22, 119, 255, 0.17) 0%, rgba(255, 255, 255, 0.05) 23%, rgba(255, 255, 255, 0.03) 87%, rgba(22, 119, 255, 0.12) 109%)",
