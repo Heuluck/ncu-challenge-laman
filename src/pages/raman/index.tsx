@@ -7,7 +7,7 @@ import {
   ProFormText,
   ProFormSelect,
 } from "@ant-design/pro-components";
-import { Button, Modal, Form, message, Tooltip, Alert } from "antd";
+import { Button, Modal, Form, message, Tooltip, Alert, Input } from "antd";
 import fileApi from "../../api/file/file";
 import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
@@ -40,6 +40,7 @@ const requestPatients = async () => {
 
 function RamanListPage() {
   const actionRef = useRef<ActionType>(null);
+  const requestDownloadReason = useRef("");
   const permission = useUserPermission();
 
   const columns: ProColumns<FileListInfo>[] = [
@@ -131,15 +132,33 @@ function RamanListPage() {
               type="primary"
               size="small"
               onClick={async () => {
-                try {
-                  await fileApi.RequestDownload({
-                    fileId: entity.id,
-                    message: "我想下载",
-                  });
-                  message.success("请求已发送，等待管理员批准");
-                } catch (_) {
-                  /* empty */
-                }
+                confirm({
+                  title: "请求下载权限",
+                  content: (
+                    <>
+                      <p className="my-2">您没有权限下载该文件，是否请求管理员批准？</p>
+                      <Input.TextArea
+                        placeholder="请输入申请理由"
+                        defaultValue={requestDownloadReason.current}
+                        onChange={(e) =>
+                          requestDownloadReason.current = e.target.value
+                        }
+                      />
+                    </>
+                  ),
+                  onOk: async () => {
+                    try {
+                      await fileApi.RequestDownload({
+                        fileId: entity.id,
+                        message: requestDownloadReason.current || "无",
+                      });
+                      message.success("请求已发送，等待管理员批准");
+                      requestDownloadReason.current = "";
+                    } catch (_) {
+                      /* empty */
+                    }
+                  },
+                });
               }}
             >
               请求权限

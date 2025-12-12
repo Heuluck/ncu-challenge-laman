@@ -287,7 +287,7 @@ function DownloadReqPage() {
   return (
     <>
       <Alert
-        title="鼠标悬停在患者信息上可查看详细信息；点击展开按钮搜索更多选项"
+        title="鼠标悬停在请求人或患者信息上可查看详细信息；点击展开按钮搜索更多选项"
         type="info"
         showIcon
         style={{ marginBottom: 12 }}
