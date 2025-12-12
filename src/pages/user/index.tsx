@@ -6,7 +6,7 @@ import {
   ProFormText,
   ProFormSelect,
 } from "@ant-design/pro-components";
-import { Button, Form, message, Modal } from "antd";
+import { Alert, Button, Form, message, Modal } from "antd";
 import { useRef, useState } from "react";
 import type * as req from "../../api/user/user-req";
 import userApi from "../../api/user/user";
@@ -251,6 +251,12 @@ function UserPage() {
   return (
     <>
       {CreateEditDrawer}
+      <Alert
+        title="点击展开按钮搜索更多选项"
+        type="info"
+        showIcon
+        style={{ marginBottom: 12 }}
+      />
       <ProTable<userData>
         columns={columns}
         actionRef={actionRef}

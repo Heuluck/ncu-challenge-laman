@@ -1,6 +1,6 @@
 import type { ActionType, ProColumns } from "@ant-design/pro-components";
 import { ProFormSelect, ProTable } from "@ant-design/pro-components";
-import { Button, message, Modal, Tooltip } from "antd";
+import { Alert, Button, message, Modal, Tooltip } from "antd";
 import { useRef } from "react";
 import fileApi from "../../api/file/file";
 import patientApi from "../../api/patient/patient";
@@ -286,6 +286,12 @@ function DownloadReqPage() {
 
   return (
     <>
+      <Alert
+        title="鼠标悬停在患者信息上可查看详细信息；点击展开按钮搜索更多选项"
+        type="info"
+        showIcon
+        style={{ marginBottom: 12 }}
+      />
       <ProTable<requestListItem>
         columns={columns}
         actionRef={actionRef}

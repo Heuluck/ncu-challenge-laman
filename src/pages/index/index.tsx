@@ -6,6 +6,7 @@ import type { PatientListItem } from "../../api/patient/patient-res";
 import { useEffect, useRef, useState } from "react";
 import { getColumns } from "./columns";
 import useUserStore from "../../store/user";
+import { Alert } from "antd";
 
 const requestGroups = async () => {
   try {
@@ -48,49 +49,57 @@ function IndexPage() {
   });
 
   return (
-    <ProTable<PatientListItem>
-      columns={columns}
-      actionRef={actionRef}
-      request={async (params, _sorter, _filter) => {
-        const { current: page = 1, pageSize: limit = 10, ...rest } = params;
-        const data = await patientApi.GetPatientList({
-          page,
-          limit,
-          ...rest,
-        });
-        return Promise.resolve({
-          data: data.data?.items || [],
-          total: data.data?.pagination?.total || 0,
-          success: true,
-        });
-      }}
-      cardBordered
-      search={{
-        labelWidth: "auto",
-      }}
-      scroll={{ x: 1650 }}
-      rowKey="key"
-      pagination={{
-        showQuickJumper: true,
-        pageSize: 10,
-      }}
-      dateFormatter="string"
-      headerTitle="表格标题"
-      toolBarRender={() => [
-        isAdmin && (
-          <CreatePatientDrawer
-            key="create"
-            formOpen={formOpen}
-            setFormOpen={setFormOpen}
-            formRef={formRef}
-            editData={editData}
-            setEditData={setEditData}
-            actionRef={actionRef}
-            requestGroups={requestGroups}
-          />
-        ),
-      ]}
-    />
+    <>
+      <Alert
+        title="点击展开按钮搜索更多选项"
+        type="info"
+        showIcon
+        style={{ marginBottom: 12 }}
+      />
+      <ProTable<PatientListItem>
+        columns={columns}
+        actionRef={actionRef}
+        request={async (params, _sorter, _filter) => {
+          const { current: page = 1, pageSize: limit = 10, ...rest } = params;
+          const data = await patientApi.GetPatientList({
+            page,
+            limit,
+            ...rest,
+          });
+          return Promise.resolve({
+            data: data.data?.items || [],
+            total: data.data?.pagination?.total || 0,
+            success: true,
+          });
+        }}
+        cardBordered
+        search={{
+          labelWidth: "auto",
+        }}
+        scroll={{ x: 1650 }}
+        rowKey="key"
+        pagination={{
+          showQuickJumper: true,
+          pageSize: 10,
+        }}
+        dateFormatter="string"
+        headerTitle="表格标题"
+        toolBarRender={() => [
+          isAdmin && (
+            <CreatePatientDrawer
+              key="create"
+              formOpen={formOpen}
+              setFormOpen={setFormOpen}
+              formRef={formRef}
+              editData={editData}
+              setEditData={setEditData}
+              actionRef={actionRef}
+              requestGroups={requestGroups}
+            />
+          ),
+        ]}
+      />
+    </>
   );
 }
 

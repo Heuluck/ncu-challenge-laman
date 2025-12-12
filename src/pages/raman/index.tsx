@@ -7,7 +7,7 @@ import {
   ProFormText,
   ProFormSelect,
 } from "@ant-design/pro-components";
-import { Button, Modal, Form, message, Tooltip } from "antd";
+import { Button, Modal, Form, message, Tooltip, Alert } from "antd";
 import fileApi from "../../api/file/file";
 import { GetPatientList } from "../../api/patient/patient";
 import { toHumanReadableSize } from "../../utils/toHuman";
@@ -52,7 +52,7 @@ function RamanListPage() {
       hideInSearch: true,
     },
     {
-      title: "病人信息",
+      title: "患者信息",
       dataIndex: "patient",
       key: "patientId",
       fixed: "left",
@@ -71,11 +71,18 @@ function RamanListPage() {
             }`}
           >
             <span>
-              {entity.patientCaseNo} ({entity.patientName})
+              {entity.patientCaseNo} ({entity.patientName}) -{" "}
+              {entity.patientDiagnosis}
             </span>
           </Tooltip>
         );
       },
+    },
+    {
+      title: "患者诊断",
+      dataIndex: "patientDiagnosis",
+      key: "patientDiagnosis",
+      hideInTable: true,
     },
     {
       title: "文件原名",
@@ -244,43 +251,51 @@ function RamanListPage() {
   };
 
   return (
-    <ProTable<FileListInfo>
-      columns={columns}
-      actionRef={actionRef}
-      columnsState={{
-        defaultValue: {
-          filename: { show: false },
-        },
-      }}
-      request={async (params, _sorter, _filter) => {
-        const { current: page = 1, pageSize: limit = 10, ...rest } = params;
-        const data = await fileApi.GetFileList({
-          page,
-          limit,
-          ...rest,
-        });
-        return Promise.resolve({
-          data: data.data?.files || [],
-          total: data.data?.pagination?.total || 0,
-          success: true,
-        });
-      }}
-      cardBordered
-      search={{
-        labelWidth: "auto",
-      }}
-      scroll={{ x: 800 }}
-      rowKey="key"
-      pagination={{
-        showQuickJumper: true,
-        pageSize: 10,
-      }}
-      dateFormatter="string"
-      headerTitle="表格标题"
-      toolBarRender={() => [
-        permission.hasAdminPermission && renderUploadAction(),
-      ]}
-    />
+    <>
+      <Alert
+        title="鼠标悬停在患者信息上可查看详细信息；点击展开按钮搜索更多选项"
+        type="info"
+        showIcon
+        style={{ marginBottom: 12 }}
+      />
+      <ProTable<FileListInfo>
+        columns={columns}
+        actionRef={actionRef}
+        columnsState={{
+          defaultValue: {
+            filename: { show: false },
+          },
+        }}
+        request={async (params, _sorter, _filter) => {
+          const { current: page = 1, pageSize: limit = 10, ...rest } = params;
+          const data = await fileApi.GetFileList({
+            page,
+            limit,
+            ...rest,
+          });
+          return Promise.resolve({
+            data: data.data?.files || [],
+            total: data.data?.pagination?.total || 0,
+            success: true,
+          });
+        }}
+        cardBordered
+        search={{
+          labelWidth: "auto",
+        }}
+        scroll={{ x: 800 }}
+        rowKey="key"
+        pagination={{
+          showQuickJumper: true,
+          pageSize: 10,
+        }}
+        dateFormatter="string"
+        headerTitle="表格标题"
+        toolBarRender={() => [
+          permission.hasAdminPermission && renderUploadAction(),
+        ]}
+      />
+    </>
   );
 }
 
