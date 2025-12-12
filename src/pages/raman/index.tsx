@@ -27,7 +27,7 @@ export type TableListItem = {
 
 const requestPatients = async () => {
   try {
-    const resp = await GetPatientList({ page: 1, limit: 10000 });
+    const resp = await GetPatientList({ page: 1, limit: 1919114 });
     const items = resp.data?.items || [];
     return items.map((p) => ({
       label: `${p.caseNo} (${p.abbr} - ${p.gender} - ${p.diagnosis})`,
@@ -59,9 +59,17 @@ function RamanListPage() {
       fixed: "left",
       valueType: "select",
       renderFormItem(_, config, form) {
-        return <ProFormSelect showSearch {...config} {...form} />;
+        return (
+          <ProFormSelect
+            showSearch
+            {...config}
+            {...form}
+            request={() => {
+              return requestPatients();
+            }}
+          />
+        );
       },
-      request: requestPatients,
       render(_, entity) {
         return (
           <Tooltip
@@ -136,12 +144,14 @@ function RamanListPage() {
                   title: "请求下载权限",
                   content: (
                     <>
-                      <p className="my-2">您没有权限下载该文件，是否请求管理员批准？</p>
+                      <p className="my-2">
+                        您没有权限下载该文件，是否请求管理员批准？
+                      </p>
                       <Input.TextArea
                         placeholder="请输入申请理由"
                         defaultValue={requestDownloadReason.current}
                         onChange={(e) =>
-                          requestDownloadReason.current = e.target.value
+                          (requestDownloadReason.current = e.target.value)
                         }
                       />
                     </>
